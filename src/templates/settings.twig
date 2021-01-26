@@ -1,0 +1,24 @@
+
+{% import "_includes/forms" as forms %}
+
+{{ forms.autosuggestField({
+    first: true,
+    label: 'Facebook Pixel Id',
+    instructions: 'When you register a new Facebook Application, Facebook will generate a unique App ID for your app.',
+    id: 'pixelId',
+    name: 'pixelId',
+    value: settings.pixelId,
+    required: true,
+    suggestEnvVars: true,
+}) }}
+
+{{ forms.autosuggestField({
+    first: true,
+    label: 'Facebook Conversion API Access Token',
+    instructions: 'When you register a new Facebook Application, Facebook will generate a unique App ID for your app.',
+    id: 'accessToken',
+    name: 'accessToken',
+    value: settings.accessToken,
+    required: true,
+    suggestEnvVars: true,
+}) }}

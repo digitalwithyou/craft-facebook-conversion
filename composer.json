@@ -1,0 +1,42 @@
+{
+    "name": "dwy/facebook-conversion",
+    "description": "Craft CMS plugin to send web events directly to Facebook",
+    "version": "1.0.0",
+    "type": "craft-plugin",
+    "keywords": [
+        "craft",
+        "craftcms",
+        "craft-plugin",
+        "facebook"
+    ],
+    "license": "proprietary",
+    "authors": [
+        {
+            "name": "Digital With You",
+            "homepage": "https://dwy.be"
+        },
+        {
+            "name": "Dieter Wyns",
+            "homepage": "https://diewy.be"
+        }
+    ],
+    "support": {
+        "email": "craftsupport@dwy.be",
+        "issues": "https://github.com/digitalwithyou/craft-facebook-conversion/issues?state=open",
+        "source": "https://github.com/digitalwithyou/craft-facebook-conversion",
+        "docs": "https://github.com/digitalwithyou/craft-facebook-conversion/blob/main/README.md"
+    },
+    "require": {
+        "craftcms/cms": "^3.1.0",
+        "facebook/php-business-sdk": "^9.0"
+    },
+    "autoload": {
+        "psr-4": {
+            "dwy\\FacebookConversion\\": "src/"
+        }
+    },
+    "extra": {
+        "name": "Facebook Conversion",
+        "handle": "facebook-conversion"
+    }
+}
