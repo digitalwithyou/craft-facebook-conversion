@@ -1,7 +1,7 @@
 {
     "name": "dwy/facebook-conversion",
     "description": "Craft CMS plugin to send web events directly to Facebook",
-    "version": "1.0.0",
+    "version": "1.0.1",
     "type": "craft-plugin",
     "keywords": [
         "craft",
