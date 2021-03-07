@@ -1,5 +1,9 @@
 # Release Notes for Facebook Conversion
 
+## 1.0.2 - 2021-03-07
+
+- Added support for the [Mollie Payments](https://plugins.craftcms.com/mollie-payments) Plugin
+
 ## 1.0.1 - 2021-01-29
 
 - New Plugin Icon (Thanks Steve!)
