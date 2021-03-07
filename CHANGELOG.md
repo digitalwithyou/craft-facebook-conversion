@@ -1,5 +1,10 @@
 # Release Notes for Facebook Conversion
 
+## 1.0.3 - 2021-03-07
+
+- Added support for Facebook [Test Event Codes](https://www.facebook.com/business/help/2040882565969969).
+- Upgraded Facebook SDK to support Facebook Ads API v10
+
 ## 1.0.2 - 2021-03-07
 
 - Added support for the [Mollie Payments](https://plugins.craftcms.com/mollie-payments) Plugin
