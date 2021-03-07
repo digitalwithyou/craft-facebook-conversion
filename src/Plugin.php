@@ -11,8 +11,11 @@ use dwy\FacebookConversion\listeners\commerce\cms\Search as CommerceSearchEvent;
 use dwy\FacebookConversion\listeners\commerce\order\AfterAddLineItem;
 use dwy\FacebookConversion\listeners\commerce\order\AfterCompleteOrder;
 use dwy\FacebookConversion\hooks\HeadTag;
+use dwy\FacebookConversion\listeners\molliepayments\AfterTransaction;
 use dwy\FacebookConversion\models\Settings;
 use dwy\FacebookConversion\services\FacebookBusinessApi;
+use studioespresso\molliepayments\MolliePayments;
+use studioespresso\molliepayments\services\Transaction;
 use yii\base\Event;
 
 class Plugin extends BasePlugin
@@ -61,6 +64,10 @@ class Plugin extends BasePlugin
         }
         else {
             Event::on(Search::class, Search::EVENT_AFTER_SEARCH, new CmsSearchEvent);
+        }
+
+        if (class_exists(MolliePayments::class) && class_exists(Transaction::class)) {
+            Event::on(Transaction::class, MolliePayments::EVENT_AFTER_TRANSACTION_UPDATE, new AfterTransaction);
         }
     }
 
