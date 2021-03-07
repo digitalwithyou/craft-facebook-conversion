@@ -18,6 +18,11 @@ class Settings extends Model
      */
     public $accessToken;
 
+    /**
+     * @var string
+     */
+    public $testEventCode;
+
     public function behaviors()
     {
         return [

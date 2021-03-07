@@ -41,6 +41,10 @@ class FacebookBusinessApi
         $eventRequest = (new EventRequest($settings->getPixelId()))
             ->setEvents([$event]);
 
+        if (!empty($settings->testEventCode)) {
+            $eventRequest->setTestEventCode($settings->testEventCode);
+        }
+
         $eventRequest->execute();
     }
 

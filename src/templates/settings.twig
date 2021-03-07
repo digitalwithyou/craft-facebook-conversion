@@ -13,7 +13,6 @@
 }) }}
 
 {{ forms.autosuggestField({
-    first: true,
     label: 'Facebook Conversion API Access Token',
     instructions: 'See the official <a href="https://www.facebook.com/business/help/1341993546002479" target="_blank">Facebook documentation</a> on how to create an Access Token',
     id: 'accessToken',
@@ -21,4 +20,12 @@
     value: settings.accessToken,
     required: true,
     suggestEnvVars: true,
+}) }}
+
+{{ forms.textField({
+    label: 'Test Event Code',
+    instructions: 'When testing the Server Events you can add the <a href="https://www.facebook.com/business/help/2040882565969969" target="_blank">Test Event Code</a>.',
+    id: 'testEventCode',
+    name: 'testEventCode',
+    value: settings.testEventCode,
 }) }}
