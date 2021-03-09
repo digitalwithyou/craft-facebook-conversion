@@ -28,8 +28,6 @@ class Plugin extends BasePlugin
         Event::on(Application::class, Application::EVENT_INIT, function() {
             parent::init();
 
-            ray()->showEvents();
-
             $this->_registerHooks();
             $this->_registerEventListeners();
             $this->_registerComponents();
