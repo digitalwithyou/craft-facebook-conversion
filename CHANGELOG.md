@@ -1,5 +1,9 @@
 # Release Notes for Facebook Conversion
 
+## 1.0.5 - 2021-03-09
+
+- Bugfix: Code of local debugging was still present 
+
 ## 1.0.4 - 2021-03-09
 
 - Added logger to facilitate debugging (Access tokens are removed from the logs)
