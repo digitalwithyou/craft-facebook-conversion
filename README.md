@@ -12,7 +12,7 @@
 
 The plugin can be installed via the Plugin Store in the Craft Control Panel.
 
-Or, open your terminal, go the Craft project, download the 
+Or, open your terminal, go the Craft project and install the plugin via Composer:
 
 ```
 composer require dwy\facebook-conversion
@@ -49,12 +49,21 @@ In the Events Manager:
 For more information, check the [Create an Access Token for Conversions API in Guided Setup](https://www.facebook.com/business/help/1341993546002479) article in the official documention.
 
 
+### Test Event Code
+
+Can be used to test the implementation.
+
+1. Navigate to the Events Testing tab in the Events Manager
+2. Copy the `test_event_code` to the Settings page of the plugin
+
+Make sure an event that can be linked to a user by Facebook (i.e. Purchase event, by having a valid `fbclid` parameter, etc) is used when testing.
+
+
 ## Template implementation
 
 The Facebook Pixel can be added to your template by adding the `facebook-conversion-head-tag` hook to the head of the page. For example:
 
-```
-...
+```html
 <head>
     <meta charset="utf-8">
 
@@ -63,7 +72,6 @@ The Facebook Pixel can be added to your template by adding the `facebook-convers
     {% hook 'facebook-conversion-head-tag' %}
 </head>
 <body>
-...
 ```
 
 Please note, when the Facebook Pixel is already added by another plugin (E.g. SEOmatic) don't add the template hook to avoid duplication.
