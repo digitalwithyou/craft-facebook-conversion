@@ -4,6 +4,7 @@ namespace dwy\FacebookConversion\services;
 
 use Craft;
 use dwy\FacebookConversion\Plugin;
+use dwy\FacebookConversion\logger\CraftLogger;
 use FacebookAds\Api;
 use FacebookAds\Object\ServerSide\Event;
 use FacebookAds\Object\ServerSide\EventRequest;
@@ -19,6 +20,10 @@ class FacebookBusinessApi
         $settings = Plugin::getInstance()->getSettings();
 
         $this->api = Api::init(null, null, $settings->getAccessToken());
+
+        $logger = new CraftLogger();
+
+        $this->api->setLogger($logger);
     }
 
     public function sendEvent($eventName, UserData $userData = null, CustomData $customData = null)

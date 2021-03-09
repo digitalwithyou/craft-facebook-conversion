@@ -6,6 +6,7 @@ use Craft;
 use craft\base\Plugin as BasePlugin;
 use craft\commerce\elements\Order;
 use craft\services\Search;
+use craft\web\Application;
 use dwy\FacebookConversion\listeners\cms\Search as CmsSearchEvent;
 use dwy\FacebookConversion\listeners\commerce\cms\Search as CommerceSearchEvent;
 use dwy\FacebookConversion\listeners\commerce\order\AfterAddLineItem;
@@ -24,17 +25,21 @@ class Plugin extends BasePlugin
 
     public function init()
     {
-        parent::init();
+        Event::on(Application::class, Application::EVENT_INIT, function() {
+            parent::init();
 
-        $this->_registerHooks();
-        $this->_registerEventListeners();
-        $this->_registerComponents();
+            ray()->showEvents();
 
-        if (Craft::$app->getRequest()->getIsConsoleRequest()) {
-            return;
-        }
+            $this->_registerHooks();
+            $this->_registerEventListeners();
+            $this->_registerComponents();
 
-        $this->_getFacebookClickId();
+            if (Craft::$app->getRequest()->getIsConsoleRequest()) {
+                return;
+            }
+
+            $this->_getFacebookClickId();
+        });
     }
 
     protected function createSettingsModel()
