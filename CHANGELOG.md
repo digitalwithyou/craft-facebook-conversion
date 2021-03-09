@@ -1,5 +1,9 @@
 # Release Notes for Facebook Conversion
 
+## 1.0.4 - 2021-03-09
+
+- Added logger to facilitate debugging (Access tokens are removed from the logs)
+
 ## 1.0.3 - 2021-03-07
 
 - Added support for Facebook [Test Event Codes](https://www.facebook.com/business/help/2040882565969969).
