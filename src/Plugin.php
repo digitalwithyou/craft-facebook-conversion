@@ -15,6 +15,7 @@ use dwy\FacebookConversion\hooks\HeadTag;
 use dwy\FacebookConversion\listeners\molliepayments\AfterTransaction;
 use dwy\FacebookConversion\models\Settings;
 use dwy\FacebookConversion\services\FacebookBusinessApi;
+use dwy\FacebookConversion\twig\TwigExtension;
 use studioespresso\molliepayments\MolliePayments;
 use studioespresso\molliepayments\services\Transaction;
 use yii\base\Event;
@@ -36,6 +37,7 @@ class Plugin extends BasePlugin
                 return;
             }
 
+            $this->_registerTwigFunctions();
             $this->_getFacebookClickId();
         });
     }
@@ -56,6 +58,11 @@ class Plugin extends BasePlugin
     private function _registerHooks()
     {
         Craft::$app->view->hook('facebook-conversion-head-tag', new HeadTag);
+    }
+
+    private function _registerTwigFunctions()
+    {
+        Craft::$app->view->registerTwigExtension(new TwigExtension);
     }
 
     private function _registerEventListeners()
