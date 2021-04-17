@@ -1,5 +1,9 @@
 # Release Notes for Facebook Conversion
 
+## 1.0.6 - 2021-04-17
+
+- Added Twig function to send Server Events (See the [documentation](https://facebook-conversion.dwy.be/documentation/manual-tracking.html) for more info).
+
 ## 1.0.5 - 2021-03-09
 
 - Bugfix: Code of local debugging was still present 
