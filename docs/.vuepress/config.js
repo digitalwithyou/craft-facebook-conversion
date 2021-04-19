@@ -14,5 +14,9 @@ module.exports = {
             { text: 'Plugin Store', link: 'https://plugins.craftcms.com/facebook-conversion' },
             { text: 'GitHub', link: 'https://github.com/digitalwithyou/craft-facebook-conversion' },
         ]
-    }
+    },
+    head: [
+        ['script', { src: 'https://cdn.panelbear.com/analytics.js?site=3F6WJMN2HHX', async: true }],
+        ['script', {}, 'window.panelbear = window.panelbear || function() { (window.panelbear.q = window.panelbear.q || []).push(arguments); }; panelbear(\'config\', { site: \'3F6WJMN2HHX\' });']
+    ]
 }
