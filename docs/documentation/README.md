@@ -82,3 +82,9 @@ E.g.:
 </head>
 <body>
 ```
+
+## Legal
+
+Please follow the government regulations that apply to your business. Be aware that for EU countries the "Cookie Law" also applies to Server Events and other technologies. Make sure to update your Privacy Policy and ask for consent before sending any data to partners such as Facebook.
+
+The use of the Plugin, its functionality, and the legal implementation is the responsibility of the owner of the website.
