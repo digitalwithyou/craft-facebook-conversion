@@ -53,7 +53,7 @@ The **Access Token** can get generated in the Settings tab.
 
 ![Screenshot](../assets/facebook-events-manager-access-token.jpg)
 
-When sending server events to Facebook they won't show in real-time, which doesn't help validating and debugging the integration. Luckely there is a way to debug more easily, when adding a **Test Event Code** the events will load in real-time in the Test Events tab.
+When sending server events to Facebook they won't show in real-time, which doesn't help to validate and debug the integration. Luckily there is a way to debug more easily, when adding a **Test Event Code** the events will load in real-time in the Test Events tab.
 
 ::: warning
 Only fill in the Test Event Code when you're validating or debugging the integration.
