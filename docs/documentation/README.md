@@ -15,14 +15,14 @@ Or, open your terminal, go the Craft project and install the plugin via Composer
 <code-group>
 <code-block title="Craft 3.5+">
 ```bash
-composer require dwy\facebook-conversion
+composer require dwy/facebook-conversion
 ./craft plugin/install facebook-conversion
 ```
 </code-block>
 
 <code-block title="Craft 3.0+">
 ```bash
-composer require dwy\facebook-conversion
+composer require dwy/facebook-conversion
 ./craft install/plugin facebook-conversion
 ```
 </code-block>
