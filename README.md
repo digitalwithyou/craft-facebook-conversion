@@ -15,7 +15,7 @@ The plugin can be installed via the Plugin Store in the Craft Control Panel.
 Or, open your terminal, go the Craft project and install the plugin via Composer:
 
 ```
-composer require dwy\facebook-conversion
+composer require dwy/facebook-conversion
 ./craft plugin/install facebook-conversion
 ```
 
@@ -76,9 +76,5 @@ The Facebook Pixel can be added to your template by adding the `facebook-convers
 
 Please note, when the Facebook Pixel is already added by another plugin (E.g. SEOmatic) don't add the template hook to avoid duplication.
 
-## Roadmap
 
-- Freeform support
-- Formie support
-
-Brought you Digital With you, follow us on [Instagram](https://www.instagram.com/digitalwithyou/)
+Brought you [Digital With you](https://digitalwithyou.com), follow us on [Instagram](https://www.instagram.com/digitalwithyou/)
