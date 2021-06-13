@@ -1,5 +1,9 @@
 # Release Notes for Facebook Conversion
 
+## 1.0.7 - 2021-06-13
+
+- Upgraded Facebook SDK to support Facebook Ads API v11
+
 ## 1.0.6 - 2021-04-17
 
 - Added Twig function to send Server Events (See the [documentation](https://facebook-conversion.dwy.be/documentation/manual-tracking.html) for more info).
