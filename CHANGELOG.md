@@ -1,5 +1,9 @@
 # Release Notes for Facebook Conversion
 
+## 1.0.8 - 2021-06-17
+
+- Bugfix to support Craft Commerce 3.1.3 and lower
+
 ## 1.0.7 - 2021-06-13
 
 - Upgraded Facebook SDK to support Facebook Ads API v11

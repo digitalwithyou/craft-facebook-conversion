@@ -40,11 +40,17 @@ class BaseCommerceEvent
                 ->setLastName($billingAddress->lastName)
                 ->setPhone($billingAddress->phone)
                 ->setState($billingAddress->stateName)
-                ->setState($billingAddress->stateName)
                 ->setZipCode($billingAddress->zipCode)
-                ->setCountryCode($billingAddress->getCountryIso());
+                ->setCountryCode($this->getCountryIso($billingAddress));
         }
 
         return $userData;
+    }
+
+    private function getCountryIso($billingAddress): string
+    {
+        $country = $billingAddress->getCountry();
+
+        return $country ? strtolower($country->iso) : '';
     }
 }
