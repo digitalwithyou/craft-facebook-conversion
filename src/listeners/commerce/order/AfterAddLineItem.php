@@ -3,6 +3,7 @@
 namespace dwy\FacebookConversion\listeners\commerce\order;
 
 use craft\commerce\events\LineItemEvent;
+use craft\helpers\ElementHelper;
 use dwy\FacebookConversion\listeners\commerce\BaseCommerceEvent;
 use FacebookAds\Object\ServerSide\Content;
 use FacebookAds\Object\ServerSide\CustomData;
@@ -13,6 +14,10 @@ class AfterAddLineItem extends BaseCommerceEvent
     {
         $lineItem = $event->lineItem;
         $order = $lineItem->getOrder();
+
+        if (ElementHelper::isDraftOrRevision($order) || !$order->id) {
+            return;
+        }
 
         $content = (new Content())
             ->setItemPrice($lineItem->getSalePrice())

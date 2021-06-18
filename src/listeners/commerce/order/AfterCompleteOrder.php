@@ -2,6 +2,7 @@
 
 namespace dwy\FacebookConversion\listeners\commerce\order;
 
+use craft\helpers\ElementHelper;
 use dwy\FacebookConversion\listeners\commerce\BaseCommerceEvent;
 use FacebookAds\Object\ServerSide\Content;
 use FacebookAds\Object\ServerSide\CustomData;
@@ -13,6 +14,10 @@ class AfterCompleteOrder extends BaseCommerceEvent
     {
         $order = $event->sender;
         $contents = [];
+
+        if (ElementHelper::isDraftOrRevision($order) || !$order->id) {
+            return;
+        }
 
         foreach ($order->getLineItems() as $lineItem) {
             $contents[] = (new Content())
