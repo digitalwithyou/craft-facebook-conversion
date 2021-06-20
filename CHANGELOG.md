@@ -1,5 +1,10 @@
 # Release Notes for Facebook Conversion
 
+## 1.0.9 - 2021-06-20
+
+- Improved parameters and Deduplication Keys
+- Added support for Web Payments Plugin
+
 ## 1.0.8 - 2021-06-17
 
 - Bugfix to support Craft Commerce 3.1.3 and lower
