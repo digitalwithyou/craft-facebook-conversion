@@ -32,6 +32,6 @@ class AfterCompleteOrder extends BaseCommerceEvent
             ->setContentType('product')
             ->setContents($contents);
 
-        $this->sendEvent('Purchase', $order->getCustomer(), $customData);
+        $this->sendEvent('Purchase', $order, $customData);
     }
 }

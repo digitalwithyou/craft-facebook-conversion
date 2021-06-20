@@ -2,7 +2,6 @@
 
 namespace dwy\FacebookConversion\listeners\cms;
 
-use Craft;
 use dwy\FacebookConversion\Plugin;
 use FacebookAds\Object\ServerSide\CustomData;
 use yii\base\Event;

@@ -2,19 +2,30 @@
 
 namespace dwy\FacebookConversion\hooks;
 
+use craft\commerce\Plugin as Commerce;
 use dwy\FacebookConversion\Plugin;
 
 class HeadTag
 {
     public function __invoke(array &$context): string
     {
-        $settings = Plugin::getInstance()->getSettings();
+        $plugin = Plugin::getInstance();
+        $settings = $plugin->getSettings();
 
         $pixelId = $settings->getPixelId();
 
         if (empty($pixelId)) {
             return '';
         }
+
+        $email = Commerce::getInstance()
+            ->getCarts()
+            ->getCart()
+            ->getEmail();
+
+        $externalId = $plugin->getExternalId($email);
+
+        $options = $email ? ", {'external_id': {$externalId}}" : "";
 
         return <<<EOD
 <!-- Facebook Pixel Code -->
@@ -27,7 +38,7 @@ class HeadTag
     t.src=v;s=b.getElementsByTagName(e)[0];
     s.parentNode.insertBefore(t,s)}(window, document,'script',
     'https://connect.facebook.net/en_US/fbevents.js');
-    fbq('init', '$pixelId');
+    fbq('init', '$pixelId'$options);
     fbq('track', 'PageView');
 </script>
 <noscript><img height="1" width="1" style="display:none"

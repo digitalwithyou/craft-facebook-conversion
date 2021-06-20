@@ -30,6 +30,6 @@ class AfterAddLineItem extends BaseCommerceEvent
             ->setContentType('product')
             ->setContents([$content]);
 
-        $this->sendEvent('AddToCart', $order->getCustomer(), $customData);
+        $this->sendEvent('AddToCart', $order, $customData);
     }
 }

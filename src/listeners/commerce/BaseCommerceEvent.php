@@ -3,45 +3,55 @@
 namespace dwy\FacebookConversion\listeners\commerce;
 
 use craft\commerce\Plugin as Commerce;
-use craft\commerce\models\Customer;
+use craft\commerce\elements\Order;
 use dwy\FacebookConversion\Plugin;
 use FacebookAds\Object\ServerSide\UserData;
 use FacebookAds\Object\ServerSide\CustomData;
 
 class BaseCommerceEvent
 {
-    public function sendEvent($eventName, Customer $customer = null, CustomData $customData = null)
+    public function sendEvent($eventName, Order $order = null, CustomData $customData = null)
     {
-        if (!$customer) {
-            $customer = Commerce::getInstance()
+        if (!$order) {
+            $order = Commerce::getInstance()
                 ->getCarts()
-                ->getCart()
-                ->getCustomer();
+                ->getCart();
         }
 
-        $userData = $this->getUserData($customer);
+        $userData = $this->getUserData($order);
 
         Plugin::getInstance()->facebook->sendEvent($eventName, $userData, $customData);
     }
 
-    public function getUserData(Customer $customer): UserData
+    public function getUserData(Order $order): UserData
     {
-        $userData = Plugin::getInstance()->facebook->getUserData();
-        $cart = Commerce::getInstance()->getCarts()->getCart();
+        $plugin = Plugin::getInstance();
+        $userData = $plugin->facebook->getUserData();
+        $customer = $order->getCustomer() ?? Commerce::getInstance()->getCarts()->getCart()->getCustomer();
+        $email = $order->getEmail() ?? $customer->getEmail();
 
-        $userData->setEmail($customer->getEmail());
-        $userData->setExternalId($customer->id);
+        if (!empty($email)) {
+            $userData->setEmail($email);
 
-        $billingAddress = $cart->getBillingAddress() ?? $customer->getPrimaryBillingAddress();
+            $externalId = $plugin->getExternalId($email);
+            $userData->setExternalId($externalId);
+        }
 
-        if ($billingAddress) {
+        $address = $order->getBillingAddress() ?? $customer->getPrimaryBillingAddress();
+
+        if (!$address) {
+            $address = $order->getShippingAddress() ?? $customer->getPrimaryShippingAddress();
+        }
+
+        if ($address) {
             $userData
-                ->setFirstName($billingAddress->firstName)
-                ->setLastName($billingAddress->lastName)
-                ->setPhone($billingAddress->phone)
-                ->setState($billingAddress->stateName)
-                ->setZipCode($billingAddress->zipCode)
-                ->setCountryCode($this->getCountryIso($billingAddress));
+                ->setFirstName($address->firstName)
+                ->setLastName($address->lastName)
+                ->setPhone($address->phone)
+                ->setState($address->stateName)
+                ->setCity($address->city)
+                ->setZipCode($address->zipCode)
+                ->setCountryCode($this->getCountryIso($address));
         }
 
         return $userData;

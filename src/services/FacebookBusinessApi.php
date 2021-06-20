@@ -68,32 +68,51 @@ class FacebookBusinessApi
 
     public function getFbc(): ?string
     {
-        $cookies = Craft::$app->getRequest()->cookies;
-        $session = Craft::$app->session;
+        $fbc = Craft::$app->session->get('fbc');
 
-        $id = $session->get('fbc') ?? $cookies->get('_fbc');
-
-        if (empty($id)) {
-            return null;
+        if (empty($fbc) && isset($_COOKIE['_fbc']) && preg_match('/fb\.1\.\d+\.\S+/', $_COOKIE['_fbc'])) {
+            $fbc = $_COOKIE['_fbc'];
         }
 
-        $time = time();
-
-        return "fb.1.$time.$id";
+        return $fbc;
     }
 
-    public function getFbp()
+    public function getFbp(): ?string
     {
-        $settings = Plugin::getInstance()->getSettings();
+        $fbp = isset($_COOKIE['_fbp']) ? $_COOKIE['_fbp'] : '';
 
-        $pixelId = $settings->getPixelId();
-
-        if (empty($pixelId)) {
-            return null;
+        if (empty($fbp) || !preg_match('/fb\.1\.\d+\.\d+/', $fbp)) {
+            $fbp = Craft::$app->session->get('_fbp');
         }
 
-        $time = time();
+        if (empty($fbp)) {
+            $time = time();
+            $randomNumber = random_int(1000000000, 9999999999);
+            $fbp = "fb.1.$time.$randomNumber";
 
-        return "fb.1.$time.$pixelId";
+            $this->setCookie('_fbp', $fbp);
+
+            Craft::$app->session->set('_fbp', $fbp);
+        }
+
+        return $fbp;
+    }
+
+    private function setCookie($name = '', $value = '', $expire = 2147483647): void
+    {
+        $domain = Craft::$app->getConfig()->getGeneral()->defaultCookieDomain;
+        $expire = (int) $expire;
+
+        if (PHP_VERSION_ID >= 70300) {
+            setcookie($name, $value, [
+                'expires' => $expire,
+                'path' => '/',
+                'domain' => $domain,
+            ]);
+        } else {
+            setcookie($name, $value, $expire, '/', $domain);
+        }
+
+        $_COOKIE[$name] = $value;
     }
 }

@@ -42,6 +42,11 @@ class Plugin extends BasePlugin
         });
     }
 
+    public function getExternalId($email = null)
+    {
+        return Craft::$app->getSecurity()->generatePasswordHash('fb_' . $email);
+    }
+
     protected function createSettingsModel()
     {
         return new Settings();
@@ -93,7 +98,10 @@ class Plugin extends BasePlugin
         $fbclid = Craft::$app->getRequest()->get('fbclid');
 
         if ($fbclid) {
-            Craft::$app->session->set('fbc', $fbclid);
+            $time = time();
+            $fbc = "fb.1.$time.$fbclid";
+
+            Craft::$app->session->set('fbc', $fbc);
         }
     }
 }
