@@ -13,19 +13,24 @@ class HeadTag
         $settings = $plugin->getSettings();
 
         $pixelId = $settings->getPixelId();
+        $options = '';
 
         if (empty($pixelId)) {
             return '';
         }
 
-        $email = Commerce::getInstance()
-            ->getCarts()
-            ->getCart()
-            ->getEmail();
+        if (class_exists(Commerce::class)) {
+            $email = Commerce::getInstance()
+                ->getCarts()
+                ->getCart()
+                ->getEmail();
 
-        $externalId = $plugin->getExternalId($email);
+            $externalId = $plugin->getExternalId($email);
 
-        $options = $email ? ", {'external_id': {$externalId}}" : "";
+            if ($email) {
+                $options = ", {'external_id': {$externalId}}";
+            }
+        }
 
         return <<<EOD
 <!-- Facebook Pixel Code -->
