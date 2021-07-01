@@ -28,4 +28,4 @@ To see if the Plugin sends an Event to Facebook the logs can be checked. The pre
 
 The Curl request contains the event name, all data, time, and access token. For security reasons, some data is hashed (as required by Facebook) and only the first five characters of the Access Token are logged. The Curl request can also be used to manually do the request via a terminal (do not forget to replace the filtered Access Token).
 
-The [Payload Helper](https://developers.facebook.com/docs/marketing-api/conversions-api/payload-helper) can be used to replicate the event undependely of the Plugin.
+The [Payload Helper](https://developers.facebook.com/docs/marketing-api/conversions-api/payload-helper) can be used to replicate the event independently of the Plugin.
