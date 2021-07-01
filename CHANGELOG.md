@@ -1,5 +1,9 @@
 # Release Notes for Facebook Conversion
 
+## 1.0.11 - 2021-07-01
+
+- Improved acceptance rate by Facebook.
+
 ## 1.0.10 - 2021-06-29
 
 - Bugfix: Template hook to use Facebook Pixel couldn't be used without Craft Commerce
