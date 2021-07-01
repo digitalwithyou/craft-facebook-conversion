@@ -25,7 +25,7 @@ class AfterAddLineItem extends BaseCommerceEvent
             ->setQuantity($lineItem->qty);
 
         $customData = (new CustomData())
-            ->setCurrency($order->getPaymentCurrency())
+            ->setCurrency(strtoupper($order->getPaymentCurrency()))
             ->setValue($lineItem->getTotal())
             ->setContentType('product')
             ->setContents([$content]);

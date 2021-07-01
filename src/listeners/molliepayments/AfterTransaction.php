@@ -26,7 +26,7 @@ class AfterTransaction
         }
 
         $customData = (new CustomData())
-            ->setCurrency($event->transaction->currency)
+            ->setCurrency(strtoupper($event->transaction->currency))
             ->setValue($event->transaction->amount);
 
 

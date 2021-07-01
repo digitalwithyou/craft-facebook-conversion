@@ -27,7 +27,7 @@ class AfterCompleteOrder extends BaseCommerceEvent
         }
 
         $customData = (new CustomData())
-            ->setCurrency($order->getPaymentCurrency())
+            ->setCurrency(strtoupper($order->getPaymentCurrency()))
             ->setValue($order->getTotalPrice())
             ->setContentType('product')
             ->setContents($contents);
