@@ -18,7 +18,12 @@ class BaseCommerceEvent
                 ->getCart();
         }
 
+        if (!$customData) {
+            $customData = new CustomData();
+        }
+
         $userData = $this->getUserData($order);
+        $customData->setOrderId($order->number);
 
         Plugin::getInstance()->facebook->sendEvent($eventName, $userData, $customData);
     }
@@ -52,6 +57,10 @@ class BaseCommerceEvent
                 ->setCity($address->city)
                 ->setZipCode($address->zipCode)
                 ->setCountryCode($this->getCountryIso($address));
+        }
+
+        if ($order->lastIp) {
+            $userData->setClientIpAddress($order->lastIp);
         }
 
         return $userData;
