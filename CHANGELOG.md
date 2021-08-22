@@ -1,5 +1,11 @@
 # Release Notes for Facebook Conversion
 
+## 1.0.12 - 2021-08-22
+
+- Improved acceptance rate by Facebook: 
+  - Added order id
+  - Use ip address of client / order
+
 ## 1.0.11 - 2021-07-01
 
 - Improved acceptance rate by Facebook.
