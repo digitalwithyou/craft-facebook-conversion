@@ -1,5 +1,9 @@
 # Release Notes for Facebook Conversion
 
+## 1.0.13 - 2021-09-16
+
+- Upgraded Facebook SDK to support Facebook Ads API v12
+
 ## 1.0.12 - 2021-08-22
 
 - Improved acceptance rate by Facebook: 
