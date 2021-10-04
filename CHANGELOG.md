@@ -1,5 +1,9 @@
 # Release Notes for Facebook Conversion
 
+## 1.0.14 - 2021-10-04
+
+- Handle Facebook being down
+
 ## 1.0.13 - 2021-09-16
 
 - Upgraded Facebook SDK to support Facebook Ads API v12
