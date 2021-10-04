@@ -6,6 +6,7 @@ use Craft;
 use dwy\FacebookConversion\Plugin;
 use dwy\FacebookConversion\logger\CraftLogger;
 use FacebookAds\Api;
+use FacebookAds\Exception\Exception as FacebookException;
 use FacebookAds\Object\ServerSide\Event;
 use FacebookAds\Object\ServerSide\EventRequest;
 use FacebookAds\Object\ServerSide\UserData;
@@ -50,7 +51,12 @@ class FacebookBusinessApi
             $eventRequest->setTestEventCode($settings->testEventCode);
         }
 
-        $eventRequest->execute();
+        try {
+            $eventRequest->execute();
+        }
+        catch(FacebookException $exception) {
+            Craft::error($exception->getMessage());
+        }
     }
 
     public function getUserData(): UserData
