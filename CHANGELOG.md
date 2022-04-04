@@ -1,5 +1,9 @@
 # Release Notes for Facebook Conversion
 
+## 1.0.15 - 2022-04-04
+
+- Upgraded Facebook SDK
+
 ## 1.0.14 - 2021-10-04
 
 - Handle Facebook being down
