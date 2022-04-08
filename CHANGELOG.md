@@ -1,5 +1,9 @@
 # Release Notes for Facebook Conversion
 
+## 1.0.16 - 2022-04-08
+
+- Bugfix: Web Console error on external id
+
 ## 1.0.15 - 2022-04-04
 
 - Upgraded Facebook SDK
