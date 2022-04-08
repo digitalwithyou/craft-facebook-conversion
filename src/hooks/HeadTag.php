@@ -28,7 +28,7 @@ class HeadTag
             $externalId = $plugin->getExternalId($email);
 
             if ($email) {
-                $options = ", {'external_id': {$externalId}}";
+                $options = ", {'external_id': '{$externalId}'}";
             }
         }
 
