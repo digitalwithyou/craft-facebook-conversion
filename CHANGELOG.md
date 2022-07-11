@@ -1,5 +1,7 @@
 # Release Notes for Facebook Conversion
 
+- Improved test event code by supporting as environment variable
+
 ## 1.0.16 - 2022-04-08
 
 - Bugfix: Web Console error on external id
