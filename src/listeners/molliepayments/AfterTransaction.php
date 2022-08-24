@@ -8,6 +8,7 @@ use studioespresso\molliepayments\events\TransactionUpdateEvent;
 
 class AfterTransaction
 {
+    // @phpstan-ignore-next-line
     public function __invoke(TransactionUpdateEvent $event)
     {
         if ($event->status !== 'paid') {

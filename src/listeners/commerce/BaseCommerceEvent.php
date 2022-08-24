@@ -10,9 +10,11 @@ use FacebookAds\Object\ServerSide\CustomData;
 
 class BaseCommerceEvent
 {
+    // @phpstan-ignore-next-line
     public function sendEvent($eventName, Order $order = null, CustomData $customData = null)
     {
         if (!$order) {
+            // @phpstan-ignore-next-line
             $order = Commerce::getInstance()
                 ->getCarts()
                 ->getCart();
@@ -28,10 +30,12 @@ class BaseCommerceEvent
         Plugin::getInstance()->facebook->sendEvent($eventName, $userData, $customData);
     }
 
+    // @phpstan-ignore-next-line
     public function getUserData(Order $order): UserData
     {
         $plugin = Plugin::getInstance();
         $userData = $plugin->facebook->getUserData();
+        // @phpstan-ignore-next-line
         $customer = $order->getCustomer() ?? Commerce::getInstance()->getCarts()->getCart()->getCustomer();
         $email = $order->getEmail() ?? $customer->getEmail();
 

@@ -10,6 +10,7 @@ use FacebookAds\Object\ServerSide\CustomData;
 
 class AfterAddLineItem extends BaseCommerceEvent
 {
+    // @phpstan-ignore-next-line
     public function __invoke(LineItemEvent $event)
     {
         $lineItem = $event->lineItem;
