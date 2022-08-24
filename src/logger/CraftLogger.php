@@ -57,7 +57,7 @@ class CraftLogger extends CurlLogger
      */
     public function logRequest($level, RequestInterface $request, array $context = array())
     {
-        $new_line = ' \\'.PHP_EOL.'  ';
+        $new_line = ' \\' . PHP_EOL . '  ';
         $method = $request->getMethod();
         $method_flag = static::getMethodFlag($method);
         $params = $this->sortParams(array_merge(
@@ -66,13 +66,13 @@ class CraftLogger extends CurlLogger
             $this->processParams($request->getFileParams(), $method, true)
         ));
 
-        $buffer = 'curl'.($method_flag ? ' -'.$method_flag : '');
+        $buffer = 'curl' . ($method_flag ? ' -' . $method_flag : '');
 
         foreach ($params as $param) {
-            $buffer .= $new_line.$param;
+            $buffer .= $new_line . $param;
         }
 
-        $buffer .= $new_line.$this->processUrl($request);
+        $buffer .= $new_line . $this->processUrl($request);
 
         Craft::info($buffer);
     }

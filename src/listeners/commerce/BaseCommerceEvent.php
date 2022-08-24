@@ -2,11 +2,11 @@
 
 namespace dwy\FacebookConversion\listeners\commerce;
 
-use craft\commerce\Plugin as Commerce;
 use craft\commerce\elements\Order;
+use craft\commerce\Plugin as Commerce;
 use dwy\FacebookConversion\Plugin;
-use FacebookAds\Object\ServerSide\UserData;
 use FacebookAds\Object\ServerSide\CustomData;
+use FacebookAds\Object\ServerSide\UserData;
 
 class BaseCommerceEvent
 {

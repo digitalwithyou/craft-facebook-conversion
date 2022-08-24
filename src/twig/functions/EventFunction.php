@@ -7,7 +7,7 @@ use FacebookAds\Object\ServerSide\CustomData;
 
 class EventFunction
 {
-    public function __invoke($eventName, $userData = [], $customData = []) : void
+    public function __invoke($eventName, $userData = [], $customData = []): void
     {
         $userDataObject = Plugin::getInstance()->facebook->getUserData();
         $this->dataToObjects($userData, $userDataObject);

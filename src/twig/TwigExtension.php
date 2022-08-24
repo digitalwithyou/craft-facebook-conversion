@@ -27,7 +27,7 @@ class TwigExtension extends AbstractExtension implements GlobalsInterface
     public function getFunctions(): array
     {
         return [
-            new TwigFunction('fbEvent', new EventFunction),
+            new TwigFunction('fbEvent', new EventFunction()),
         ];
     }
 

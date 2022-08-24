@@ -7,11 +7,11 @@ use craft\base\Plugin as BasePlugin;
 use craft\commerce\elements\Order;
 use craft\services\Search;
 use craft\web\Application;
+use dwy\FacebookConversion\hooks\HeadTag;
 use dwy\FacebookConversion\listeners\cms\Search as CmsSearchEvent;
 use dwy\FacebookConversion\listeners\commerce\cms\Search as CommerceSearchEvent;
 use dwy\FacebookConversion\listeners\commerce\order\AfterAddLineItem;
 use dwy\FacebookConversion\listeners\commerce\order\AfterCompleteOrder;
-use dwy\FacebookConversion\hooks\HeadTag;
 use dwy\FacebookConversion\listeners\molliepayments\AfterTransaction;
 use dwy\FacebookConversion\models\Settings;
 use dwy\FacebookConversion\services\FacebookBusinessApi;
@@ -62,27 +62,26 @@ class Plugin extends BasePlugin
 
     private function _registerHooks()
     {
-        Craft::$app->view->hook('facebook-conversion-head-tag', new HeadTag);
+        Craft::$app->view->hook('facebook-conversion-head-tag', new HeadTag());
     }
 
     private function _registerTwigFunctions()
     {
-        Craft::$app->view->registerTwigExtension(new TwigExtension);
+        Craft::$app->view->registerTwigExtension(new TwigExtension());
     }
 
     private function _registerEventListeners()
     {
         if (class_exists(Order::class)) {
-            Event::on(Order::class, Order::EVENT_AFTER_ADD_LINE_ITEM, new AfterAddLineItem);
-            Event::on(Order::class, Order::EVENT_AFTER_COMPLETE_ORDER, new AfterCompleteOrder);
-            Event::on(Search::class, Search::EVENT_AFTER_SEARCH, new CommerceSearchEvent);
-        }
-        else {
-            Event::on(Search::class, Search::EVENT_AFTER_SEARCH, new CmsSearchEvent);
+            Event::on(Order::class, Order::EVENT_AFTER_ADD_LINE_ITEM, new AfterAddLineItem());
+            Event::on(Order::class, Order::EVENT_AFTER_COMPLETE_ORDER, new AfterCompleteOrder());
+            Event::on(Search::class, Search::EVENT_AFTER_SEARCH, new CommerceSearchEvent());
+        } else {
+            Event::on(Search::class, Search::EVENT_AFTER_SEARCH, new CmsSearchEvent());
         }
 
         if (class_exists(MolliePayments::class) && class_exists(Transaction::class)) {
-            Event::on(Transaction::class, MolliePayments::EVENT_AFTER_TRANSACTION_UPDATE, new AfterTransaction);
+            Event::on(Transaction::class, MolliePayments::EVENT_AFTER_TRANSACTION_UPDATE, new AfterTransaction());
         }
     }
 

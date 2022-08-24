@@ -3,14 +3,14 @@
 namespace dwy\FacebookConversion\services;
 
 use Craft;
-use dwy\FacebookConversion\Plugin;
 use dwy\FacebookConversion\logger\CraftLogger;
+use dwy\FacebookConversion\Plugin;
 use FacebookAds\Api;
 use FacebookAds\Exception\Exception as FacebookException;
+use FacebookAds\Object\ServerSide\CustomData;
 use FacebookAds\Object\ServerSide\Event;
 use FacebookAds\Object\ServerSide\EventRequest;
 use FacebookAds\Object\ServerSide\UserData;
-use FacebookAds\Object\ServerSide\CustomData;
 
 class FacebookBusinessApi
 {
@@ -53,8 +53,7 @@ class FacebookBusinessApi
 
         try {
             $eventRequest->execute();
-        }
-        catch(FacebookException $exception) {
+        } catch (FacebookException $exception) {
             Craft::error($exception->getMessage());
         }
     }
