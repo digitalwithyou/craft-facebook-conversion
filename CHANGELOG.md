@@ -1,6 +1,10 @@
 # Release Notes for Facebook Conversion
 
-# 1.0.17 - 2022-07-13
+## 1.1.0 - 2022-09-02
+
+- Craft 4 compatibility
+
+## 1.0.17 - 2022-07-13
 
 - Upgraded Facebook SDK
 - Improved test event code by supporting as environment variable (Thanks @qrazi)
