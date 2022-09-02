@@ -3,6 +3,7 @@
 namespace dwy\FacebookConversion;
 
 use Craft;
+use craft\base\Model;
 use craft\base\Plugin as BasePlugin;
 use craft\commerce\elements\Order;
 use craft\services\Search;
@@ -22,10 +23,10 @@ use yii\base\Event;
 
 class Plugin extends BasePlugin
 {
-    public $hasCpSettings = true;
-
     public function init()
     {
+        $this->hasCpSettings = true;
+
         Event::on(Application::class, Application::EVENT_INIT, function() {
             parent::init();
 
@@ -47,12 +48,12 @@ class Plugin extends BasePlugin
         return Craft::$app->getSecurity()->generatePasswordHash('fb_' . $email);
     }
 
-    protected function createSettingsModel()
+    protected function createSettingsModel(): ?Model
     {
         return new Settings();
     }
 
-    protected function settingsHtml()
+    protected function settingsHtml(): ?string
     {
         return Craft::$app->getView()->renderTemplate(
             'facebook-conversion/settings',

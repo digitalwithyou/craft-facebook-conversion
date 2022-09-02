@@ -23,7 +23,7 @@ class Settings extends Model
      */
     public $testEventCode;
 
-    public function behaviors()
+    public function behaviors(): array
     {
         return [
             'parser' => [

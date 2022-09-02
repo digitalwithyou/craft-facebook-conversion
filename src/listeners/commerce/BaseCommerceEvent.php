@@ -37,7 +37,11 @@ class BaseCommerceEvent
         $userData = $plugin->facebook->getUserData();
         // @phpstan-ignore-next-line
         $customer = $order->getCustomer() ?? Commerce::getInstance()->getCarts()->getCart()->getCustomer();
-        $email = $order->getEmail() ?? $customer->getEmail();
+        $email = $order->getEmail();
+
+        if (empty($email) && $customer) {
+            $email = $customer->getEmail();
+        }
 
         if (!empty($email)) {
             $userData->setEmail($email);
@@ -46,21 +50,28 @@ class BaseCommerceEvent
             $userData->setExternalId($externalId);
         }
 
-        $address = $order->getBillingAddress() ?? $customer->getPrimaryBillingAddress();
+        $address = $order->getBillingAddress();
 
         if (!$address) {
-            $address = $order->getShippingAddress() ?? $customer->getPrimaryShippingAddress();
+            $address = $order->getShippingAddress();
         }
 
         if ($address) {
+            // Craft 3 & 4 compatibility
+            $phone = property_exists($address, 'phone') ?? $address->phone;
+            $city = property_exists($address, 'city') ? $address->city : $address->getLocality();
+            $zipCode = property_exists($address, 'zipCode') ? $address->zipCode : $address->getPostalCode();
+            $state = property_exists($address, 'stateName') ? $address->stateName : $address->administrativeArea;
+            $country = method_exists($address, 'getCountryIso') ? $address->getCountryIso() : $address->getCountryCode();
+
             $userData
                 ->setFirstName($address->firstName)
                 ->setLastName($address->lastName)
-                ->setPhone($address->phone)
-                ->setState($address->stateName)
-                ->setCity($address->city)
-                ->setZipCode($address->zipCode)
-                ->setCountryCode($this->getCountryIso($address));
+                ->setPhone($phone)
+                ->setState($state)
+                ->setCity($city)
+                ->setZipCode($zipCode)
+                ->setCountryCode(strtolower($country));
         }
 
         if ($order->lastIp) {
@@ -68,12 +79,5 @@ class BaseCommerceEvent
         }
 
         return $userData;
-    }
-
-    private function getCountryIso($billingAddress): string
-    {
-        $country = $billingAddress->getCountry();
-
-        return $country ? strtolower($country->iso) : '';
     }
 }
