@@ -50,4 +50,9 @@ class Settings extends Model
     {
         return Craft::parseEnv($this->accessToken);
     }
+
+    public function getTestEventCode(): ?string
+    {
+        return Craft::parseEnv($this->testEventCode);
+    }
 }
