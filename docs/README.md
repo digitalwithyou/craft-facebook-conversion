@@ -2,7 +2,7 @@
 home: true
 heroImage: /icon.svg
 heroText: Facebook Conversion Plugin
-tagline: for Craft CMS 3 & Craft Commerce 3
+tagline: for Craft CMS & Craft Commerce
 actionText: Get Started →
 actionLink: /documentation/
 features:

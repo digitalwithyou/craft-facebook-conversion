@@ -2,7 +2,7 @@
 
 ## Requirements
 
-- Craft CMS 3.0.20 or later
+- Craft CMS 3.0.20, 4.0.0 or later
 - Access to Facebook Events Manager (See [Facebook Business](https://business.facebook.com/))
 
 
@@ -13,6 +13,13 @@ The plugin can be installed via the Plugin Store in the Craft Control Panel.
 Or, open your terminal, go the Craft project and install the plugin via Composer:
 
 <code-group>
+<code-block title="Craft 4+">
+```bash
+composer require dwy/facebook-conversion
+./craft plugin/install facebook-conversion
+```
+</code-block>
+
 <code-block title="Craft 3.5+">
 ```bash
 composer require dwy/facebook-conversion

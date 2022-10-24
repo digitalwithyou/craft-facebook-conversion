@@ -1,9 +1,9 @@
-# Facebook Conversion plugin for Craft CMS 3.x
+# Facebook Conversion plugin for Craft CMS 3.x & 4.x
 
 ## Requirements
 
-- Craft CMS 3.x
-- Works best with Craft Commerce 3.x
+- Craft CMS 3.x or 4.x
+- Works best with Craft Commerce
 - Facebook Pixel (See [configuration](#pixel) how to obtain the Facebook Pixel)
 - Facebook Business Manager (See [Facebook Business](https://business.facebook.com/))
 - Facebook Access Token (See [configuration](#access-token) how to obtain the Access Token)
@@ -77,4 +77,4 @@ The Facebook Pixel can be added to your template by adding the `facebook-convers
 Please note, when the Facebook Pixel is already added by another plugin (E.g. SEOmatic) don't add the template hook to avoid duplication.
 
 
-Brought you [Digital With you](https://digitalwithyou.com), follow us on [Instagram](https://www.instagram.com/digitalwithyou/)
+Brought to you by [Digital With you](https://digitalwithyou.com), follow us on [Instagram](https://www.instagram.com/digitalwithyou/)
