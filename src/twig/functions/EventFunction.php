@@ -9,6 +9,14 @@ class EventFunction
 {
     public function __invoke($eventName, $userData = [], $customData = []): void
     {
+        if (is_null($userData)) {
+            $userData = [];
+        }
+
+        if (is_null($customData)) {
+            $customData = [];
+        }
+
         $userDataObject = Plugin::getInstance()->facebook->getUserData();
         $this->dataToObjects($userData, $userDataObject);
 
