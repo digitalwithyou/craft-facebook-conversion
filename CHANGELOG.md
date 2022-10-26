@@ -1,5 +1,10 @@
 # Release Notes for Facebook Conversion
 
+## 1.1.1 - 2022-10-26
+
+- Upgraded Facebook SDK
+- Bugfix: Allowed `null` as valid parameter type in the `fbEvent` twig function
+
 ## 1.1.0 - 2022-09-02
 
 - Craft 4 compatibility
