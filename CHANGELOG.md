@@ -1,5 +1,9 @@
 # Release Notes for Facebook Conversion
 
+## 1.1.3 - 2022-11-08
+
+- Upgraded Facebook SDK
+
 ## 1.1.2 - 2022-11-07
 
 - Fixed syntax error in Facebook library
