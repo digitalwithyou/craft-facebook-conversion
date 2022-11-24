@@ -71,10 +71,11 @@ Only fill in the Test Event Code when you're validating or debugging the integra
 
 ## Template
 
-If you Facebook Pixel is not added directly in the Template, or not added by another Plugin (E.g. SEOmatic), you can add it through the Facebook Conversion Plugin. In order to do so, add the following Twig hook to the head of your page in your template:
+If you Facebook Pixel is not added directly in the Template, or not added by another Plugin (E.g. SEOmatic), you can add it through the Facebook Conversion Plugin. In order to do so, add the following Twig hooks to the head and body of your page in your template:
 
 ```twig
 {% hook 'facebook-conversion-head-tag' %}
+{% hook 'facebook-conversion-body-tag' %}
 ```
 
 E.g.:
@@ -88,6 +89,7 @@ E.g.:
     {% hook 'facebook-conversion-head-tag' %}
 </head>
 <body>
+    {% hook 'facebook-conversion-body-tag' %}
 ```
 
 ## Legal
