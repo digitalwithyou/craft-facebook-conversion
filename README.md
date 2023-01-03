@@ -61,7 +61,7 @@ Make sure an event that can be linked to a user by Facebook (i.e. Purchase event
 
 ## Template implementation
 
-The Facebook Pixel can be added to your template by adding the `facebook-conversion-head-tag` hook to the head of the page. For example:
+The Facebook Pixel can be added to your template by adding the `facebook-conversion-head-tag` hook to the head of the page and the `facebook-conversion-body-tag` to the body. For example:
 
 ```html
 <head>
@@ -72,6 +72,7 @@ The Facebook Pixel can be added to your template by adding the `facebook-convers
     {% hook 'facebook-conversion-head-tag' %}
 </head>
 <body>
+    {% hook 'facebook-conversion-body-tag' %}
 ```
 
 Please note, when the Facebook Pixel is already added by another plugin (E.g. SEOmatic) don't add the template hook to avoid duplication.
