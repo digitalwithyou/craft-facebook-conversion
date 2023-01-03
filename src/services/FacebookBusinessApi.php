@@ -74,7 +74,13 @@ class FacebookBusinessApi
 
     public function getFbc(): ?string
     {
-        $fbc = Craft::$app->session->get('fbc');
+        $session = Craft::$app->has('session', true) ? Craft::$app->get('session') : null;
+
+        if (!$session || !$session->getIsActive()) {
+            return null;
+        }
+
+        $fbc = $session->get('fbc');
 
         if (empty($fbc) && isset($_COOKIE['_fbc']) && preg_match('/fb\.1\.\d+\.\S+/', $_COOKIE['_fbc'])) {
             $fbc = $_COOKIE['_fbc'];
@@ -85,10 +91,16 @@ class FacebookBusinessApi
 
     public function getFbp(): ?string
     {
+        $session = Craft::$app->has('session', true) ? Craft::$app->get('session') : null;
+
+        if (!$session || !$session->getIsActive()) {
+            return null;
+        }
+
         $fbp = isset($_COOKIE['_fbp']) ? $_COOKIE['_fbp'] : '';
 
         if (empty($fbp) || !preg_match('/fb\.1\.\d+\.\d+/', $fbp)) {
-            $fbp = Craft::$app->session->get('_fbp');
+            $fbp = $session->get('_fbp');
         }
 
         if (empty($fbp)) {
@@ -98,7 +110,7 @@ class FacebookBusinessApi
 
             $this->setCookie('_fbp', $fbp);
 
-            Craft::$app->session->set('_fbp', $fbp);
+            $session->set('_fbp', $fbp);
         }
 
         return $fbp;

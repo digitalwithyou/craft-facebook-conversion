@@ -95,13 +95,14 @@ class Plugin extends BasePlugin
 
     private function _getFacebookClickId()
     {
+        $session = Craft::$app->has('session', true) ? Craft::$app->get('session') : null;
         $fbclid = Craft::$app->getRequest()->get('fbclid');
 
-        if ($fbclid) {
+        if ($fbclid && $session && $session->getIsActive()) {
             $time = time();
             $fbc = "fb.1.$time.$fbclid";
 
-            Craft::$app->session->set('fbc', $fbc);
+            $session->set('fbc', $fbc);
         }
     }
 }
