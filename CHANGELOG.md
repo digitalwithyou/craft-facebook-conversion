@@ -1,8 +1,10 @@
 # Release Notes for Facebook Conversion
 
-## 1.2.0 - 2022-11-24
+## 1.2.0 - 2023-01-03
 
-* Added separate body tag hook
+- Added separate body tag hook (thanks @boboldehampsink)
+- Fixed issue with 32-bit systems
+- Fixed issue when creating orders in queued jobs 
 
 ## 1.1.3 - 2022-11-08
 
