@@ -8,6 +8,7 @@ use craft\base\Plugin as BasePlugin;
 use craft\commerce\elements\Order;
 use craft\services\Search;
 use craft\web\Application;
+use dwy\FacebookConversion\hooks\BodyTag;
 use dwy\FacebookConversion\hooks\HeadTag;
 use dwy\FacebookConversion\listeners\cms\Search as CmsSearchEvent;
 use dwy\FacebookConversion\listeners\commerce\cms\Search as CommerceSearchEvent;
@@ -64,6 +65,7 @@ class Plugin extends BasePlugin
     private function _registerHooks()
     {
         Craft::$app->view->hook('facebook-conversion-head-tag', new HeadTag());
+        Craft::$app->view->hook('facebook-conversion-body-tag', new BodyTag());
     }
 
     private function _registerTwigFunctions()
