@@ -9,7 +9,7 @@ use craft\behaviors\EnvAttributeParserBehavior;
 class Settings extends Model
 {
     /**
-     * @var integer
+     * @var string
      */
     public $pixelId;
 
@@ -37,7 +37,7 @@ class Settings extends Model
     {
         return [
             [['pixelId', 'accessToken'], 'required'],
-            ['pixelId', 'integer'],
+            ['pixelId', 'string'],
         ];
     }
 
