@@ -1,5 +1,9 @@
 # Release Notes for Facebook Conversion
 
+## 1.2.1 - 2023-02-06
+
+- Upgraded Facebook SDK
+
 ## 1.2.0 - 2023-01-03
 
 - Added separate body tag hook (thanks @boboldehampsink)
