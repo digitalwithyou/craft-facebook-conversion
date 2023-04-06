@@ -1,5 +1,9 @@
 # Release Notes for Facebook Conversion
 
+## 1.2.2 - 2023-04-06
+
+- Bugfix: PixelID had wrong type
+
 ## 1.2.1 - 2023-02-06
 
 - Upgraded Facebook SDK
