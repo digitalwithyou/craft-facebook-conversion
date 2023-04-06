@@ -41,7 +41,7 @@ class Settings extends Model
         ];
     }
 
-    public function getPixelId(): ?int
+    public function getPixelId(): ?string
     {
         return Craft::parseEnv($this->pixelId);
     }
