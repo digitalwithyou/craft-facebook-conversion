@@ -16,12 +16,14 @@ For example:
 }, {
     'currency': 'EUR',
     'value': 20,
-}) }}
+},
+'event_id-1') }}
 ```
 
 - The first parameter is the Event Name. Both [Custom Events](https://developers.facebook.com/docs/facebook-pixel/implementation/conversion-tracking#custom-events) as [Standard Events](https://developers.facebook.com/docs/facebook-pixel/reference) are supported. (Required)
 - The second parameter is Customer Information. By default, the already known User data (of an earlier purchase or fbclid) will be used. Only add the information when you're certain it contains the latest data. (Optional)
 - The third parameter is the Custom Data. (Optional)
+- The fourth parameter is the Event ID, used by Facebook to deduplicate the same event sent from both server and browser. (Optional)
 
 All Customer Information and Custom Data parameters are supported, for a full list see the [Facebook Documentation](https://developers.facebook.com/docs/marketing-api/conversions-api/parameters). The Main Body and Server Event parameters are handled by the Plugin. Hashing is also handled by the Plugin and should not be done in the Twig function.
 
@@ -37,7 +39,7 @@ When you would like to send the Pageview events by the Server, and not by the Cl
 The known User information will automatically be added and no custom data is needed for the Pageview Event.
 
 ::: warning
-When tracking the Pageview Event via a Server event, make sure it is not sent via the client. Remove the Facebook Pixel (or Template Hook) from your template.
+When tracking the Pageview Event via a Server event, make sure it is not sent via the client. Remove the Facebook Pixel (or Template Hook) from your template. Or use the same Event ID on both Client as Server events.
 :::
 
 

@@ -27,7 +27,7 @@ class FacebookBusinessApi
         $this->api->setLogger($logger);
     }
 
-    public function sendEvent($eventName, UserData $userData = null, CustomData $customData = null)
+    public function sendEvent($eventName, UserData $userData = null, CustomData $customData = null, $eventId = null)
     {
         $settings = Plugin::getInstance()->getSettings();
         $request = Craft::$app->getRequest();
@@ -43,6 +43,10 @@ class FacebookBusinessApi
             ->setActionSource('website')
             ->setUserData($userData)
             ->setCustomData($customData);
+
+        if ($eventId) {
+            $event->setEventId($eventId);
+        }
 
         $eventRequest = (new EventRequest($settings->getPixelId()))
             ->setEvents([$event]);
