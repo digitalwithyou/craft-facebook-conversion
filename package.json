@@ -6,6 +6,6 @@
   "license": "proprietary",
   "devDependencies": {
     "@panelbear/vuepress-plugin-panelbear": "^1.0.0",
-    "vuepress": "^1.8.2"
+    "vuepress": "^1.9.10"
   }
 }
