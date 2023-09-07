@@ -1,5 +1,9 @@
 # Release Notes for Facebook Conversion
 
+## 1.3 - 2023-09-07
+
+- Added Event ID to Twig function.
+
 ## 1.2.2 - 2023-04-06
 
 - Bugfix: PixelID had wrong type
