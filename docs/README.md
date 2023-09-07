@@ -12,5 +12,5 @@ features:
   details: Use the Twig function to send Events to Facebook in your templates, supporting all event types and parameters.
 - title: Easy debugging
   details: Using the Facebook Test Event Codes, you can debug incoming events in your Facebook Events Manager. Plus, all events are securely logged in the Craft CMS log.
-footer: Copyright © 2021 Digital With You (Registered under Diewy BV)
+footer: Copyright © 2023 Digital With You (Registered under Diewy BV)
 ---
