@@ -1,6 +1,10 @@
 # Release Notes for Facebook Conversion
 
-## 1.3 - 2023-09-07
+## 1.3.1 - 2023-09-18
+
+- Upgraded Facebook SDK
+
+## 1.3.0 - 2023-09-07
 
 - Added Event ID to Twig function.
 
