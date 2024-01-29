@@ -1,5 +1,9 @@
 # Release Notes for Facebook Conversion
 
+## 1.3.2 - 2024-01-29
+
+- Upgraded to Meta Business SDK v19
+
 ## 1.3.1 - 2023-09-18
 
 - Upgraded Facebook SDK
