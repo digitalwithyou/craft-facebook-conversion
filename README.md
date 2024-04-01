@@ -1,8 +1,8 @@
-# Facebook Conversion plugin for Craft CMS 3.x & 4.x
+# Facebook Conversion plugin for Craft CMS 3, 4 & 5
 
 ## Requirements
 
-- Craft CMS 3.x or 4.x
+- Craft CMS 3.x, 4.x or 5.x
 - Works best with Craft Commerce
 - Facebook Pixel (See [configuration](#pixel) how to obtain the Facebook Pixel)
 - Facebook Business Manager (See [Facebook Business](https://business.facebook.com/))
