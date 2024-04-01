@@ -23,7 +23,7 @@
         "email": "craftsupport@dwy.be",
         "issues": "https://github.com/digitalwithyou/craft-facebook-conversion/issues?state=open",
         "source": "https://github.com/digitalwithyou/craft-facebook-conversion",
-        "docs": "https://github.com/digitalwithyou/craft-facebook-conversion/blob/main/README.md"
+        "docs": "https://digitalwithyou.com/en/plugins/facebook-conversion/getting-started"
     },
     "require": {
         "craftcms/cms": "^3.1.0|^4.0.0",
