@@ -46,7 +46,7 @@ class Plugin extends BasePlugin
 
     public function getExternalId($email)
     {
-        return Craft::$app->getSecurity()->generatePasswordHash('fb_' . $email, 1);
+        return Craft::$app->getSecurity()->generatePasswordHash('fb_' . $email, 4);
     }
 
     protected function createSettingsModel(): ?Model
