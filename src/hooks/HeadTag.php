@@ -25,9 +25,8 @@ class HeadTag
                 ->getCart()
                 ->getEmail();
 
-            $externalId = $plugin->getExternalId($email);
-
             if ($email) {
+                $externalId = $plugin->getExternalId($email);
                 $options = ", {'external_id': '{$externalId}'}";
             }
         }

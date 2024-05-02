@@ -44,9 +44,9 @@ class Plugin extends BasePlugin
         });
     }
 
-    public function getExternalId($email = null)
+    public function getExternalId($email)
     {
-        return Craft::$app->getSecurity()->generatePasswordHash('fb_' . $email);
+        return Craft::$app->getSecurity()->generatePasswordHash('fb_' . $email, 1);
     }
 
     protected function createSettingsModel(): ?Model
