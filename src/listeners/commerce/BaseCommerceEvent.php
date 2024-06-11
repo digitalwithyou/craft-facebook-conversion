@@ -40,7 +40,7 @@ class BaseCommerceEvent
         $email = $order->getEmail();
 
         if (empty($email) && $customer) {
-            $email = $customer->getEmail();
+            $email = $customer->email;
         }
 
         if (!empty($email)) {
