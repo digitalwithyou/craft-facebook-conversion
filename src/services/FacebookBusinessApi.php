@@ -32,6 +32,10 @@ class FacebookBusinessApi
         $settings = Plugin::getInstance()->getSettings();
         $request = Craft::$app->getRequest();
 
+        if (!$settings->getPixelId() || !$settings->getAccessToken()) {
+            return;
+        }
+
         if (!$userData) {
             $userData = $this->getUserData();
         }

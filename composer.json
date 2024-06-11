@@ -20,14 +20,14 @@
         }
     ],
     "support": {
-        "email": "craftsupport@dwy.be",
+        "email": "craftsupport@digitalwithyou.com",
         "issues": "https://github.com/digitalwithyou/craft-facebook-conversion/issues?state=open",
         "source": "https://github.com/digitalwithyou/craft-facebook-conversion",
-        "docs": "https://github.com/digitalwithyou/craft-facebook-conversion/blob/main/README.md"
+        "docs": "https://digitalwithyou.com/en/plugins/facebook-conversion/getting-started"
     },
     "require": {
-        "craftcms/cms": "^3.1.0|^4.0.0",
-        "facebook/php-business-sdk": "^18.0.0"
+        "craftcms/cms": "^3.1|^4.0|^5.0",
+        "facebook/php-business-sdk": "^19.0.2"
     },
     "autoload": {
         "psr-4": {
@@ -52,7 +52,7 @@
         "craftcms/rector": "dev-main"
     },
     "scripts": {
-        "rector": "rector process src --config vendor/craftcms/rector/sets/craft-cms-40.php",
+        "rector": "rector process src --config vendor/craftcms/rector/sets/craft-cms-50.php",
         "phpstan": "phpstan --memory-limit=1G",
         "check-cs": "ecs check --ansi",
         "fix-cs": "ecs check --ansi --fix"
