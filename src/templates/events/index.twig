@@ -1,49 +1,58 @@
+{#
+    @param {array} events
+    @param {object} pageInfo
+#}
+
 {% import "_includes/forms" as forms %}
 
 {% if events|length > 0 %}
-    <div class="tableview tablepane">
-        <table class="data fullwidth">
-            <thead>
-                <tr>
-                    <th>{{ "Event Name"|t('facebook-conversion') }}</th>
-                    <th>{{ "Event ID"|t('facebook-conversion') }}</th>
-                    <th>{{ "Status"|t('facebook-conversion') }}</th>
-                    <th>{{ "Date"|t('facebook-conversion') }}</th>
-                    <th>{{ "Data"|t('facebook-conversion') }}</th>
-                    <th>{{ "Response"|t('facebook-conversion') }}</th>
-                </tr>
-            </thead>
-            <tbody>
-                {% for event in events %}
+    <div class="tableview">
+        <div class="tablepane">
+            <table class="data fullwidth">
+                <thead>
                     <tr>
-                        <td>{{ event.event_name }}</td>
-                        <td>{{ event.event_id }}</td>
-                        <td>{{ event.status }}</td>
-                        <td>{{ event.created_at|date('Y-m-d H:i:s') }}</td>
-                        <td>
-                            <button type="button" class="btn small" onclick="document.getElementById('event-data-{{ event.id }}').showModal()">
-                                {{ "View Data"|t('facebook-conversion') }}
-                            </button>
-                        </td>
-                        <td>
-                            {% if event.response %}
-                                <button type="button" class="btn small" onclick="document.getElementById('event-response-{{ event.id }}').showModal()">
-                                    {{ "View Response"|t('facebook-conversion') }}
-                                </button>
-                            {% endif %}
-                        </td>
+                        <th>{{ "Event Name"|t('facebook-conversion') }}</th>
+                        <th>{{ "Event ID"|t('facebook-conversion') }}</th>
+                        <th>{{ "Status"|t('facebook-conversion') }}</th>
+                        <th>{{ "Date"|t('facebook-conversion') }}</th>
+                        <th>{{ "Data"|t('facebook-conversion') }}</th>
+                        <th>{{ "Response"|t('facebook-conversion') }}</th>
                     </tr>
-                {% endfor %}
-            </tbody>
-        </table>
+                </thead>
+                <tbody>
+                    {% for event in events %}
+                        <tr>
+                            <td>{{ event.event_name }}</td>
+                            <td>{{ event.event_id }}</td>
+                            <td>{{ event.status }}</td>
+                            <td>{{ event.created_at|date('Y-m-d H:i:s') }}</td>
+                            <td>
+                                <button type="button" class="btn small" onclick="document.getElementById('event-data-{{ event.id }}').showModal()">
+                                    {{ "View Data"|t('facebook-conversion') }}
+                                </button>
+                            </td>
+                            <td>
+                                {% if event.response %}
+                                    <button type="button" class="btn small" onclick="document.getElementById('event-response-{{ event.id }}').showModal()">
+                                        {{ "View Response"|t('facebook-conversion') }}
+                                    </button>
+                                {% endif %}
+                            </td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
 
-        {% if totalPages > 1 %}
-            <div class="pagination">
-                {% for i in 1..totalPages %}
-                    <a href="{{ url('utilities/facebook-conversion-events', { page: i }) }}" class="page-link{% if i == currentPage %} active{% endif %}">{{ i }}</a>
-                {% endfor %}
+        <div class="flex flex-justify">
+            <div class="fb-conversion-events-pagination light flex-grow">
+                {% include "_includes/pagination" with {
+                    'pageInfo': pageInfo,
+                    'itemLabel' : 'event'|t('facebook-conversion'),
+                    'itemsLabel': 'events'|t('facebook-conversion')
+                } only %}
             </div>
-        {% endif %}
+        </div>
 
         {% for event in events %}
             {% include "facebook-conversion/events/_includes/modal-event-data" with {
@@ -59,7 +68,6 @@
         {% endfor %}
     </div>
 {% else %}
-    <h2>{{ "Facebook Conversion Events"|t('facebook-conversion') }}</h2>
     <p>{{ "No events found yet"|t('facebook-conversion') }}</p>
     <p>{{ "Check the documentation to get started."|t('facebook-conversion') }}</p>
     <a href="https://digitalwithyou.com/en/plugins/facebook-conversion/getting-started" target="_blank" class="btn">{{ "Documentation"|t('facebook-conversion') }}</a>

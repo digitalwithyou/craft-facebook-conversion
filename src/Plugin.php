@@ -10,9 +10,9 @@ use craft\services\Search;
 use craft\web\Application;
 use craft\web\WebApplication;
 use dwy\FacebookConversion\console\controllers\EventsController;
-use dwy\FacebookConversion\jobs\CleanupEventLogs;
 use dwy\FacebookConversion\hooks\BodyTag;
 use dwy\FacebookConversion\hooks\HeadTag;
+use dwy\FacebookConversion\jobs\CleanupEventLogs;
 use dwy\FacebookConversion\listeners\cms\Search as CmsSearchEvent;
 use dwy\FacebookConversion\listeners\commerce\cms\Search as CommerceSearchEvent;
 use dwy\FacebookConversion\listeners\commerce\order\AfterAddLineItem;
@@ -23,6 +23,7 @@ use dwy\FacebookConversion\services\Events;
 use dwy\FacebookConversion\services\FacebookBusinessApi;
 use dwy\FacebookConversion\twig\TwigExtension;
 use dwy\FacebookConversion\utilities\Events as EventsUtility;
+use dwy\FacebookConversion\web\assets\FacebookConversionAsset;
 use studioespresso\molliepayments\MolliePayments;
 use studioespresso\molliepayments\services\Transaction;
 use yii\base\Event;
@@ -32,8 +33,6 @@ class Plugin extends BasePlugin
     public function init()
     {
         $this->hasCpSettings = true;
-
-        Craft::setAlias('@FacebookConversion', dirname(__DIR__));
 
         $this->_registerComponents();
 
@@ -46,6 +45,10 @@ class Plugin extends BasePlugin
 
             if (Craft::$app->getRequest()->getIsConsoleRequest()) {
                 return;
+            }
+
+            if (Craft::$app->getRequest()->getIsCpRequest()) {
+                $this->_registerAssets();
             }
 
             $this->_registerTwigFunctions();
@@ -75,6 +78,11 @@ class Plugin extends BasePlugin
     {
         Craft::$app->view->hook('facebook-conversion-head-tag', new HeadTag());
         Craft::$app->view->hook('facebook-conversion-body-tag', new BodyTag());
+    }
+
+    private function _registerAssets()
+    {
+        Craft::$app->getView()->registerAssetBundle(FacebookConversionAsset::class);
     }
 
     private function _registerTwigFunctions()

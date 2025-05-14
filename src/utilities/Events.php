@@ -4,6 +4,7 @@ namespace dwy\FacebookConversion\utilities;
 
 use Craft;
 use craft\base\Utility;
+use craft\web\twig\variables\Paginate;
 use dwy\FacebookConversion\Plugin;
 
 class Events extends Utility
@@ -25,20 +26,15 @@ class Events extends Utility
 
     public static function contentHtml(): string
     {
-        $page = Craft::$app->getRequest()->getPageNum();
-        $limit = 50;
-        $offset = ($page - 1) * $limit;
+        $pageNum = Craft::$app->getRequest()->getPageNum();
 
-        $events = Plugin::getInstance()->events->getEvents($limit, $offset);
-        $totalEvents = Plugin::getInstance()->events->getTotalEvents();
-        $totalPages = ceil($totalEvents / $limit);
+        $paginator = Plugin::getInstance()->events->getEventsPaginatedQuery($pageNum);
 
         return Craft::$app->getView()->renderTemplate(
             'facebook-conversion/events/index',
             [
-                'events' => $events,
-                'currentPage' => $page,
-                'totalPages' => $totalPages,
+                'events' => $paginator->getPageResults(),
+                'pageInfo' => Paginate::create($paginator),
             ]
         );
     }

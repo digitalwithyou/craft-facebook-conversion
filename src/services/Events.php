@@ -5,10 +5,12 @@ namespace dwy\FacebookConversion\services;
 use ArrayAccess;
 use Craft;
 use craft\base\Component;
+use craft\db\ActiveQuery;
+use craft\db\Paginator;
 use dwy\FacebookConversion\models\Event;
 use FacebookAds\Object\ServerSide\Event as FacebookEvent;
-use FacebookAds\Object\ServerSide\EventResponse;
 use FacebookAds\Object\ServerSide\EventRequest;
+use FacebookAds\Object\ServerSide\EventResponse;
 
 class Events extends Component
 {
@@ -33,13 +35,28 @@ class Events extends Component
         return $event;
     }
 
+    public function getEventsQuery(): ActiveQuery
+    {
+        return Event::find()->orderBy(['created_at' => SORT_DESC]);
+    }
+
     public function getEvents(int $limit = 50, int $offset = 0): array
     {
-        return Event::find()
-            ->orderBy(['created_at' => SORT_DESC])
+        return $this
+            ->getEventsQuery($limit, $offset)
             ->limit($limit)
             ->offset($offset)
             ->all();
+    }
+
+    public function getEventsPaginatedQuery(int $pageNum, int $pageSize = 50): Paginator
+    {
+        $query = $this->getEventsQuery($pageSize, $pageNum);
+
+        return new Paginator((clone $query)->limit(null), [
+            'currentPage' => $pageNum,
+            'pageSize' => $pageSize,
+        ]);
     }
 
     public function cleanup(): void
@@ -93,7 +110,6 @@ class Events extends Component
 
         foreach ($object->getters() as $attribute => $getter) {
             if (!method_exists($object, $getter)) {
-                ray('Method ' . $getter . ' does not exist on ' . get_class($object));
                 continue;
             }
 
