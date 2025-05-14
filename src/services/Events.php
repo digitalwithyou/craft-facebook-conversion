@@ -44,13 +44,7 @@ class Events extends Component
 
     public function cleanup(): void
     {
-        // Only keep the last 100 events
-        Event::find()
-            ->orderBy([
-                'created_at' => SORT_DESC,
-            ])
-            ->offset(100)
-            ->deleteAll();
+        Event::deleteAll(['<', 'created_at', (new \DateTime('-1 month'))->format('Y-m-d H:i:s')]);
     }
 
     public function getTotalEvents(): int

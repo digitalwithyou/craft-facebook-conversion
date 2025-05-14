@@ -8,7 +8,9 @@ use craft\base\Plugin as BasePlugin;
 use craft\commerce\elements\Order;
 use craft\services\Search;
 use craft\web\Application;
-use dwy\FacebookConversion\controllers\EventsController;
+use craft\web\WebApplication;
+use dwy\FacebookConversion\console\controllers\EventsController;
+use dwy\FacebookConversion\jobs\CleanupEventLogs;
 use dwy\FacebookConversion\hooks\BodyTag;
 use dwy\FacebookConversion\hooks\HeadTag;
 use dwy\FacebookConversion\listeners\cms\Search as CmsSearchEvent;
@@ -33,12 +35,13 @@ class Plugin extends BasePlugin
 
         Craft::setAlias('@FacebookConversion', dirname(__DIR__));
 
+        $this->_registerComponents();
+
         Event::on(Application::class, Application::EVENT_INIT, function() {
             parent::init();
 
             $this->_registerHooks();
             $this->_registerEventListeners();
-            $this->_registerComponents();
             $this->_registerUtilities();
 
             if (Craft::$app->getRequest()->getIsConsoleRequest()) {
@@ -124,5 +127,30 @@ class Plugin extends BasePlugin
 
             $session->set('fbc', $fbc);
         }
+    }
+
+    private function _dailyCleanup()
+    {
+        // We don't want to run this in the console, queue or when running tests
+        if (!(Craft::$app instanceof WebApplication)) {
+            return;
+        }
+
+        Event::on(
+            WebApplication::class,
+            WebApplication::EVENT_AFTER_REQUEST,
+            function () {
+                $cache = Craft::$app->getCache();
+                $key = 'facebook-conversion-daily-cleanup-last-run';
+
+                if (!$cache->exists($key)) {
+                    // Push job to queue
+                    Craft::$app->queue->push(new CleanupEventLogs());
+
+                    // Store timestamp for 24 hours
+                    $cache->set($key, true, 86400);
+                }
+            }
+        );
     }
 }
