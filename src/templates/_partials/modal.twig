@@ -1,0 +1,50 @@
+<dialog class="modal fb-conversion-modal" id="{{ id }}">
+    <div class="fb-conversion-modal-content">
+        <div class="fb-conversion-modal-header">
+            <h2>{{ title }}</h2>
+        </div>
+        <div class="fb-conversion-modal-body">
+            {{ content|raw }}
+        </div>
+        <form class="fb-conversion-modal-actions" method="dialog">
+            <button>
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-x"><path d="M18 6L6 18"/><path d="M6 6l12 12"/></svg>
+            </button>
+        </form>
+    </div>
+</dialog>
+
+{% css %}
+    .fb-conversion-modal {
+        --header-height: 3.5rem;
+    }
+
+    .fb-conversion-modal-content {
+        position: relative;
+        height: 100%;
+    }
+
+    .fb-conversion-modal-header {
+        align-items: center;
+        background-color: var(--gray-050);
+        display: flex;
+        font-size: 1.25rem;
+        font-weight: 600;
+        height: var(--header-height);
+        padding: 0 1.5rem;
+    }
+
+    .fb-conversion-modal-body {
+        padding: 1rem 1.5rem;
+        max-height: calc(100% - var(--header-height));
+        overflow-y: auto;
+    }
+
+    .fb-conversion-modal-actions {
+        position: absolute;
+        top: 1rem;
+        right: 1rem;
+        display: flex;
+        gap: 0.5rem;
+    }
+{% endcss %}

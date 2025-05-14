@@ -61,9 +61,13 @@ class FacebookBusinessApi
         }
 
         try {
-            $eventRequest->execute();
+            $response = $eventRequest->execute();
+
+            Plugin::getInstance()->events->logEvent($eventRequest, $response);
         } catch (FacebookException $exception) {
             Craft::error($exception->getMessage());
+
+            Plugin::getInstance()->events->logEvent($eventRequest, null, $exception->getMessage());
         }
     }
 

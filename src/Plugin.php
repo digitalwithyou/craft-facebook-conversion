@@ -8,6 +8,7 @@ use craft\base\Plugin as BasePlugin;
 use craft\commerce\elements\Order;
 use craft\services\Search;
 use craft\web\Application;
+use dwy\FacebookConversion\controllers\EventsController;
 use dwy\FacebookConversion\hooks\BodyTag;
 use dwy\FacebookConversion\hooks\HeadTag;
 use dwy\FacebookConversion\listeners\cms\Search as CmsSearchEvent;
@@ -16,8 +17,10 @@ use dwy\FacebookConversion\listeners\commerce\order\AfterAddLineItem;
 use dwy\FacebookConversion\listeners\commerce\order\AfterCompleteOrder;
 use dwy\FacebookConversion\listeners\molliepayments\AfterTransaction;
 use dwy\FacebookConversion\models\Settings;
+use dwy\FacebookConversion\services\Events;
 use dwy\FacebookConversion\services\FacebookBusinessApi;
 use dwy\FacebookConversion\twig\TwigExtension;
+use dwy\FacebookConversion\utilities\Events as EventsUtility;
 use studioespresso\molliepayments\MolliePayments;
 use studioespresso\molliepayments\services\Transaction;
 use yii\base\Event;
@@ -28,12 +31,15 @@ class Plugin extends BasePlugin
     {
         $this->hasCpSettings = true;
 
+        Craft::setAlias('@FacebookConversion', dirname(__DIR__));
+
         Event::on(Application::class, Application::EVENT_INIT, function() {
             parent::init();
 
             $this->_registerHooks();
             $this->_registerEventListeners();
             $this->_registerComponents();
+            $this->_registerUtilities();
 
             if (Craft::$app->getRequest()->getIsConsoleRequest()) {
                 return;
@@ -92,7 +98,19 @@ class Plugin extends BasePlugin
     {
         $this->setComponents([
             'facebook' => FacebookBusinessApi::class,
+            'events' => Events::class,
         ]);
+    }
+
+    private function _registerUtilities()
+    {
+        Event::on(
+            \craft\services\Utilities::class,
+            \craft\services\Utilities::EVENT_REGISTER_UTILITY_TYPES,
+            function(\craft\events\RegisterComponentTypesEvent $event) {
+                $event->types[] = EventsUtility::class;
+            }
+        );
     }
 
     private function _getFacebookClickId()
