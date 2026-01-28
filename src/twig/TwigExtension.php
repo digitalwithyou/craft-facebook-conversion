@@ -33,6 +33,6 @@ class TwigExtension extends AbstractExtension implements GlobalsInterface
 
     public function getOperators(): array
     {
-        return [];
+        return [[], []];
     }
 }

@@ -1,5 +1,10 @@
 # Release Notes for Facebook Conversion
 
+## 1.3.4 - 2024-05-02
+
+- Only generate external id when there is an email address
+- Use lowest blowfish cost for hashing email address to improve performance
+
 ## 1.3.3 - 2024-04-01
 
 - Craft CMS 5 supportgit 
