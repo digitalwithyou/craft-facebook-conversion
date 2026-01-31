@@ -19,20 +19,10 @@ class TwigExtension extends AbstractExtension implements GlobalsInterface
         return [];
     }
 
-    public function getFilters(): array
-    {
-        return [];
-    }
-
     public function getFunctions(): array
     {
         return [
             new TwigFunction('fbEvent', new EventFunction()),
         ];
-    }
-
-    public function getOperators(): array
-    {
-        return [];
     }
 }
