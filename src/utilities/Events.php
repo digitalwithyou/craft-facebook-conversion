@@ -19,22 +19,25 @@ class Events extends Utility
         return 'facebook-conversion-events';
     }
 
-    public static function iconPath(): ?string
+    public static function icon(): ?string
     {
-        return Craft::getAlias('@dwy/FacebookConversion/icon.svg');
+        return Craft::getAlias('@dwy/FacebookConversion/resources/utility-icon.svg');
     }
 
     public static function contentHtml(): string
     {
-        $pageNum = Craft::$app->getRequest()->getPageNum();
+        $plugin = Plugin::getInstance();
+        $settings = $plugin->getSettings();
 
-        $paginator = Plugin::getInstance()->events->getEventsPaginatedQuery($pageNum);
+        $pageNum = Craft::$app->getRequest()->getPageNum();
+        $paginator = $plugin->events->getEventsPaginatedQuery($pageNum);
 
         return Craft::$app->getView()->renderTemplate(
             'facebook-conversion/events/index',
             [
                 'events' => $paginator->getPageResults(),
                 'pageInfo' => Paginate::create($paginator),
+                'settings' => $settings,
             ]
         );
     }

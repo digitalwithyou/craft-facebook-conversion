@@ -6,7 +6,9 @@ use Craft;
 use craft\base\Model;
 use craft\base\Plugin as BasePlugin;
 use craft\commerce\elements\Order;
+use craft\events\RegisterComponentTypesEvent;
 use craft\services\Search;
+use craft\services\Utilities;
 use craft\web\Application;
 use craft\web\WebApplication;
 use dwy\FacebookConversion\console\controllers\EventsController;
@@ -115,10 +117,14 @@ class Plugin extends BasePlugin
 
     private function _registerUtilities()
     {
+        $eventName = (Craft::$app->getVersion() >= '5.0')
+            ? Utilities::EVENT_REGISTER_UTILITIES
+            : Utilities::EVENT_REGISTER_UTILITY_TYPES;
+
         Event::on(
-            \craft\services\Utilities::class,
-            \craft\services\Utilities::EVENT_REGISTER_UTILITY_TYPES,
-            function(\craft\events\RegisterComponentTypesEvent $event) {
+            Utilities::class,
+            $eventName,
+            function(RegisterComponentTypesEvent $event) {
                 $event->types[] = EventsUtility::class;
             }
         );

@@ -68,7 +68,14 @@
         {% endfor %}
     </div>
 {% else %}
-    <p>{{ "No events found yet"|t('facebook-conversion') }}</p>
+
+    <h2>{{ "No events found yet"|t('facebook-conversion') }}</h2>
+
+    {% if settings.pixelId is empty or settings.accessToken is empty %}
+        <p>{{ "Set your Facebook Pixel ID and Access Token in the <a href='{url}'>plugin settings</a> to get started."|t('facebook-conversion', { url: url('settings/plugins/facebook-conversion') })|raw }}</p>
+    {% endif %}
+
     <p>{{ "Check the documentation to get started."|t('facebook-conversion') }}</p>
     <a href="https://digitalwithyou.com/en/plugins/facebook-conversion/getting-started" target="_blank" class="btn">{{ "Documentation"|t('facebook-conversion') }}</a>
+
 {% endif %}
