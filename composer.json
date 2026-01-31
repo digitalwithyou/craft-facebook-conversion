@@ -27,7 +27,7 @@
     },
     "require": {
         "craftcms/cms": "^3.1|^4.0|^5.0",
-        "facebook/php-business-sdk": "^19.0.2"
+        "facebook/php-business-sdk": "^24.0.1"
     },
     "autoload": {
         "psr-4": {
