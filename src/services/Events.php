@@ -100,9 +100,9 @@ class Events extends Component
         return self::STATUS_SUCCESS;
     }
 
-    private function _toArray(ArrayAccess $object): ?array
+    private function _toArray(?ArrayAccess $object): ?array
     {
-        if (is_null($object)) {
+        if ($object === null) {
             return null;
         }
 

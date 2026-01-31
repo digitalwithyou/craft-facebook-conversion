@@ -20,6 +20,7 @@ class Event extends ActiveRecord
             [['event_name'], 'string', 'max' => 255],
             [['status'], 'string', 'max' => 50],
             [['response'], 'string'],
+            [['error'], 'string'],
             [['created_at'], 'safe'],
         ];
     }

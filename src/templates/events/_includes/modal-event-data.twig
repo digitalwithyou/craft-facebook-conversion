@@ -2,6 +2,7 @@
     @param {object} event
         @param {int} id
         @param {string} event_data (JSON)
+    @param {object} settings (optional) – plugin settings for test_event_code
 #}
 
 {# Variables #}
@@ -10,11 +11,34 @@
 
 {% set eventId = eventData['event_id'] ?? null %}
 
+{% set payload = { data: [eventData] } %}
+{% if settings is defined and settings.testEventCode|default('') %}
+    {% set payload = payload|merge({ test_event_code: settings.testEventCode }) %}
+{% endif %}
+{% set payloadJson = payload|json_encode %}
+{% set payloadSafe = payloadJson|replace({'</textarea>': '__TEXTAREA_CLOSE__'}) %}
+
+{% set tableHtml = include("facebook-conversion/events/_includes/event-data-table", { data: eventData }) %}
+{% set copyBlock = '<div class=\"fb-conversion-copy-json\"><textarea id=\"event-payload-' ~ event.id ~ '\" readonly class=\"fb-conversion-copy-payload\" aria-hidden=\"true\">' ~ payloadSafe ~ '</textarea><button type=\"button\" class=\"btn small\" data-copy-json-for-graph-explorer data-copy-source=\"event-payload-' ~ event.id ~ '\" data-copied-label=\"' ~ ('Copied!'|t('facebook-conversion')|e('html_attr')) ~ '\">' ~ "Copy as JSON"|t('facebook-conversion') ~ '</button></div>' %}
+
+{% css %}
+    .fb-conversion-copy-json {
+        margin-bottom: 1rem;
+    }
+    .fb-conversion-copy-payload {
+        position: absolute;
+        left: -9999px;
+        width: 1px;
+        height: 1px;
+        opacity: 0;
+        pointer-events: none;
+    }
+{% endcss %}
 
 {# Modal #}
 
 {% include "facebook-conversion/_partials/modal" with {
     id: "event-data-" ~ event.id,
     title: "Event Data"|t('facebook-conversion') ~ " " ~ (eventId ?? null),
-    content: include ("facebook-conversion/events/_includes/event-data-table", { data: eventData })
+    content: copyBlock ~ tableHtml
 } only %}

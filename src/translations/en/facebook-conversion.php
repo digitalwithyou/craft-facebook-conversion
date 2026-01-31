@@ -10,5 +10,8 @@ return [
     'View Data' => 'View Data',
     'View Response' => 'View Response',
     'Event Data' => 'Event Data',
-    'API Response' => 'API Response',
+    'Copy as JSON' => 'Copy as JSON',
+    'Copied!' => 'Copied!',
+    'View Error' => 'View Error',
+    'Error' => 'Error',
 ];
