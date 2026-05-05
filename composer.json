@@ -49,12 +49,19 @@
     "require-dev": {
         "craftcms/ecs": "dev-main",
         "craftcms/phpstan": "dev-main",
-        "craftcms/rector": "dev-main"
+        "craftcms/rector": "dev-main",
+        "phpunit/phpunit": "^10.5"
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "dwy\\FacebookConversion\\Tests\\": "tests/"
+        }
     },
     "scripts": {
         "rector": "rector process src --config vendor/craftcms/rector/sets/craft-cms-50.php",
         "phpstan": "phpstan --memory-limit=1G",
         "check-cs": "ecs check --ansi",
-        "fix-cs": "ecs check --ansi --fix"
+        "fix-cs": "ecs check --ansi --fix",
+        "test": "phpunit"
     }
 }

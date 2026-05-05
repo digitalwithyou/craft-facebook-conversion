@@ -6,6 +6,9 @@
 # COMPOSER
 vendor
 
+# PHPUNIT
+.phpunit.cache
+
 # BUILD FILES
 bower_components/
 node_modules/
