@@ -1,5 +1,18 @@
 # Release Notes for Facebook Conversion
 
+## Unreleased
+
+### Added
+- New "Server Events" CP utility that lists every event sent to the Facebook Conversions API, with modals for the request payload, the API response, and any error.
+- New `eventLogRetentionDays` plugin setting (default: 30). Set to `0` to disable event logging entirely.
+- New `facebook-conversion:viewEventLogs` user permission, required to access the Server Events utility.
+- Daily cleanup job removes log rows older than the retention window.
+- API requests now run asynchronously through Craft's queue, removing Facebook HTTP latency from the request path.
+
+### Changed
+- Event log columns (`event_data`, `response`, `error`) widened to `MEDIUMTEXT` on MySQL/MariaDB to fit larger payloads. Postgres `text` is already unbounded.
+- `_fbp` cookie now sets `secure` (when on HTTPS) and `samesite=Lax`.
+
 ## 1.3.4 - 2026-01-31
 
 - Craft CMS 5.9 support

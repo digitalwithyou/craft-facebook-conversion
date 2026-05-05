@@ -78,4 +78,21 @@ The Facebook Pixel can be added to your template by adding the `facebook-convers
 Please note, when the Facebook Pixel is already added by another plugin (E.g. SEOmatic) don't add the template hook to avoid duplication.
 
 
-Brought to you by [Digital With you](https://digitalwithyou.com), follow us on [Instagram](https://www.instagram.com/digitalwithyou/)
+### Event log retention
+
+Every event sent to the Facebook Conversions API is logged to the database and viewable in the **Server Events** utility (Utilities → Server Events). The `eventLogRetentionDays` setting controls how long rows are kept (default: 30 days). Set it to `0` to disable logging entirely. A cleanup job runs daily to remove rows older than the retention window.
+
+Access to the utility is gated by the `facebook-conversion:viewEventLogs` user permission, which can be granted per user group under **Users → Groups**.
+
+#### Manual cleanup via CLI
+
+The same cleanup routine is also exposed as a console command, useful for cron-driven retention or one-off pruning:
+
+```
+./craft facebook-conversion/events/cleanup
+```
+
+The command honors the configured `eventLogRetentionDays` setting and is a no-op when retention is disabled (`= 0`).
+
+
+Brought to you by [Digital With you](https://digitalwithyou.com)
