@@ -19,6 +19,10 @@ class FacebookConversionAsset extends AssetBundle
             'cp-facebook-conversion.css',
         ];
 
+        $this->js = [
+            'cp-facebook-conversion.js',
+        ];
+
         parent::init();
     }
 }

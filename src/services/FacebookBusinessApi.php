@@ -3,31 +3,51 @@
 namespace dwy\FacebookConversion\services;
 
 use Craft;
+use dwy\FacebookConversion\jobs\SendFacebookConversionEvent;
 use dwy\FacebookConversion\logger\CraftLogger;
 use dwy\FacebookConversion\Plugin;
 use FacebookAds\Api;
-use FacebookAds\Exception\Exception as FacebookException;
+use FacebookAds\CrashReporter;
+use FacebookAds\Http\Adapter\CurlAdapter;
+use FacebookAds\Http\Client;
 use FacebookAds\Object\ServerSide\CustomData;
 use FacebookAds\Object\ServerSide\Event;
 use FacebookAds\Object\ServerSide\EventRequest;
 use FacebookAds\Object\ServerSide\UserData;
+use FacebookAds\Session;
+use Throwable;
 
+/**
+ * HTTP client timeouts: fail fast so queued work does not block workers excessively.
+ * Connect 5s, total request 15s (SDK default total is 60s).
+ */
 class FacebookBusinessApi
 {
-    protected $api;
+    protected ?Api $api = null;
 
     public function __construct()
     {
         $settings = Plugin::getInstance()->getSettings();
 
-        $this->api = Api::init(null, null, $settings->getAccessToken());
+        $session = new Session(null, null, $settings->getAccessToken());
+        $client = new Client();
+        $adapter = $client->getAdapter();
+        if ($adapter instanceof CurlAdapter) {
+            $opts = $adapter->getOpts();
+            $opts[\CURLOPT_CONNECTTIMEOUT] = 5;
+            $opts[\CURLOPT_TIMEOUT] = 15;
+            $adapter->setOpts($opts);
+        }
+
+        $this->api = new Api($client, $session);
+        Api::setInstance($this->api);
+        CrashReporter::enable();
 
         $logger = new CraftLogger();
-
         $this->api->setLogger($logger);
     }
 
-    public function sendEvent($eventName, UserData $userData = null, CustomData $customData = null, $eventId = null, $eventSourceUrl = null)
+    public function sendEvent(string $eventName, ?UserData $userData = null, ?CustomData $customData = null, ?string $eventId = null, ?string $eventSourceUrl = null): void
     {
         $settings = Plugin::getInstance()->getSettings();
         $request = Craft::$app->getRequest();
@@ -61,13 +81,12 @@ class FacebookBusinessApi
         }
 
         try {
-            $response = $eventRequest->execute();
-
-            Plugin::getInstance()->events->logEvent($eventRequest, $response);
-        } catch (FacebookException $exception) {
-            Craft::error($exception->getMessage());
-
-            Plugin::getInstance()->events->logEvent($eventRequest, null, $exception->getMessage());
+            Craft::$app->getQueue()->push(new SendFacebookConversionEvent([
+                'eventRequestSerialization' => serialize($eventRequest),
+            ]));
+        } catch (Throwable $e) {
+            Craft::error($e->getMessage(), __METHOD__);
+            $this->_tryLogEventFailure($eventRequest, $e->getMessage());
         }
     }
 
@@ -133,16 +152,24 @@ class FacebookBusinessApi
         $domain = Craft::$app->getConfig()->getGeneral()->defaultCookieDomain;
         $expire = (int) $expire;
 
-        if (PHP_VERSION_ID >= 70300) {
-            setcookie($name, $value, [
-                'expires' => $expire,
-                'path' => '/',
-                'domain' => $domain,
-            ]);
-        } else {
-            setcookie($name, $value, $expire, '/', $domain);
-        }
+        setcookie($name, $value, [
+            'expires' => $expire,
+            'path' => '/',
+            'domain' => $domain,
+            'secure' => Craft::$app->getRequest()->getIsSecureConnection(),
+            'samesite' => 'Lax',
+            // httponly intentionally OFF: _fbp must be readable by Meta's JS pixel.
+        ]);
 
         $_COOKIE[$name] = $value;
+    }
+
+    private function _tryLogEventFailure(EventRequest $eventRequest, string $message): void
+    {
+        try {
+            Plugin::getInstance()->events->logEvent($eventRequest, null, $message);
+        } catch (Throwable $logError) {
+            Craft::error($logError->getMessage(), __METHOD__);
+        }
     }
 }

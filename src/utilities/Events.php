@@ -6,6 +6,7 @@ use Craft;
 use craft\base\Utility;
 use craft\web\twig\variables\Paginate;
 use dwy\FacebookConversion\Plugin;
+use yii\web\ForbiddenHttpException;
 
 class Events extends Utility
 {
@@ -26,6 +27,10 @@ class Events extends Utility
 
     public static function contentHtml(): string
     {
+        if (!Craft::$app->getUser()->checkPermission(Plugin::PERMISSION_VIEW_EVENT_LOGS)) {
+            throw new ForbiddenHttpException();
+        }
+
         $plugin = Plugin::getInstance();
         $settings = $plugin->getSettings();
 

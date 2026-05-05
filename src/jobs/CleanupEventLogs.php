@@ -7,7 +7,7 @@ use dwy\FacebookConversion\Plugin;
 
 class CleanupEventLogs extends BaseJob
 {
-    public function execute($queue)
+    public function execute($queue): void
     {
         Plugin::getInstance()->events->cleanup();
     }

@@ -29,3 +29,16 @@
     name: 'testEventCode',
     value: settings.testEventCode,
 }) }}
+
+<hr>
+
+{{ forms.textField({
+    label: 'Event log retention (days)'|t('facebook-conversion'),
+    instructions: 'How long to keep server event log rows in the database. Use 0 to stop storing new logs. When 0, scheduled cleanup does not delete existing rows automatically.'|t('facebook-conversion'),
+    id: 'eventLogRetentionDays',
+    name: 'eventLogRetentionDays',
+    value: settings.eventLogRetentionDays,
+    type: 'number',
+    min: 0,
+    step: 1,
+}) }}

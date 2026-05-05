@@ -23,6 +23,13 @@ class Settings extends Model
      */
     public $testEventCode;
 
+    /**
+     * Days to keep rows in the event log. Use 0 to disable storing new log rows.
+     *
+     * @var int
+     */
+    public $eventLogRetentionDays = 30;
+
     public function behaviors(): array
     {
         return [
@@ -37,7 +44,9 @@ class Settings extends Model
     {
         return [
             [['pixelId', 'accessToken'], 'required'],
-            ['pixelId', 'string'],
+            [['pixelId', 'accessToken', 'testEventCode'], 'string'],
+            [['eventLogRetentionDays'], 'integer', 'min' => 0, 'max' => 3650],
+            [['eventLogRetentionDays'], 'default', 'value' => 30],
         ];
     }
 
@@ -54,5 +63,10 @@ class Settings extends Model
     public function getTestEventCode(): ?string
     {
         return Craft::parseEnv($this->testEventCode);
+    }
+
+    public function getEventLogRetentionDays(): int
+    {
+        return (int) $this->eventLogRetentionDays;
     }
 }

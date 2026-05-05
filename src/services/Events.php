@@ -7,32 +7,59 @@ use Craft;
 use craft\base\Component;
 use craft\db\ActiveQuery;
 use craft\db\Paginator;
+use craft\helpers\Json;
+use DateTimeImmutable;
 use dwy\FacebookConversion\models\Event;
-use FacebookAds\Object\ServerSide\Event as FacebookEvent;
+use dwy\FacebookConversion\Plugin;
 use FacebookAds\Object\ServerSide\EventRequest;
 use FacebookAds\Object\ServerSide\EventResponse;
 
 class Events extends Component
 {
-    const STATUS_SUCCESS = 'success';
-    const STATUS_ERROR = 'error';
+    public const STATUS_SUCCESS = 'success';
+    public const STATUS_ERROR = 'error';
 
-    public function logEvent(EventRequest $request, EventResponse $response = null, string $error = null): Event
+    private const CLEANUP_BATCH_SIZE = 500;
+
+    /**
+     * @return Event[] saved log rows (one per event in the request)
+     */
+    public function logEvent(EventRequest $request, ?EventResponse $response = null, ?string $error = null): array
     {
-        $facebookEvent = $this->_getEventData($request);
+        $settings = Plugin::getInstance()->getSettings();
+        if ($settings->getEventLogRetentionDays() === 0) {
+            return [];
+        }
 
-        $event = new Event();
-        $event->event_id = $facebookEvent['event_id'];
-        $event->event_name = $facebookEvent['event_name'];
-        $event->event_data = $this->_toArray($facebookEvent);
-        $event->status = $this->_getStatus($response, $error);
-        $event->response = $this->_toArray($response);
-        $event->error = $error;
-        $event->created_at = new \DateTime();
+        $events = $request->getEvents();
+        if ($events === null || !is_array($events) || $events === []) {
+            Craft::warning('Facebook Conversion: EventRequest had no events to log.', __METHOD__);
+            return [];
+        }
 
-        $event->save();
+        $status = self::computeStatus($response, $error);
+        $responseJson = $response ? Json::encode(self::eventToArray($response)) : null;
+        $now = new \DateTime();
+        $rows = [];
 
-        return $event;
+        foreach ($events as $facebookEvent) {
+            $event = new Event();
+            $event->event_id = $this->_getEventId($facebookEvent);
+            $event->event_name = $this->_getEventName($facebookEvent);
+            $event->event_data = Json::encode(self::eventToArray($facebookEvent));
+            $event->status = $status;
+            $event->response = $responseJson;
+            $event->error = $error;
+            $event->created_at = $now;
+
+            if ($event->save()) {
+                $rows[] = $event;
+            } else {
+                Craft::error('Facebook Conversion: Failed to save event log: ' . Json::encode($event->getErrors()), __METHOD__);
+            }
+        }
+
+        return $rows;
     }
 
     public function getEventsQuery(): ActiveQuery
@@ -43,7 +70,7 @@ class Events extends Component
     public function getEvents(int $limit = 50, int $offset = 0): array
     {
         return $this
-            ->getEventsQuery($limit, $offset)
+            ->getEventsQuery()
             ->limit($limit)
             ->offset($offset)
             ->all();
@@ -51,9 +78,7 @@ class Events extends Component
 
     public function getEventsPaginatedQuery(int $pageNum, int $pageSize = 50): Paginator
     {
-        $query = $this->getEventsQuery($pageSize, $pageNum);
-
-        return new Paginator((clone $query)->limit(null), [
+        return new Paginator($this->getEventsQuery(), [
             'currentPage' => $pageNum,
             'pageSize' => $pageSize,
         ]);
@@ -61,7 +86,27 @@ class Events extends Component
 
     public function cleanup(): void
     {
-        Event::deleteAll(['<', 'created_at', (new \DateTime('-1 month'))->format('Y-m-d H:i:s')]);
+        $days = Plugin::getInstance()->getSettings()->getEventLogRetentionDays();
+        if ($days === 0) {
+            return;
+        }
+
+        $cutoff = self::computeCutoff($days, new DateTimeImmutable());
+
+        while (true) {
+            $ids = Event::find()
+                ->select(['id'])
+                ->where(['<', 'created_at', $cutoff])
+                ->orderBy(['id' => SORT_ASC])
+                ->limit(self::CLEANUP_BATCH_SIZE)
+                ->column();
+
+            if ($ids === []) {
+                break;
+            }
+
+            Event::deleteAll(['id' => $ids]);
+        }
     }
 
     public function getTotalEvents(): int
@@ -69,17 +114,22 @@ class Events extends Component
         return Event::find()->count();
     }
 
-
     /**
-     * Private methods
+     * Returns the cutoff datetime string (DB format) for a retention window.
+     *
+     * Pure function — exposed as a static seam so tests can pin "now".
      */
-
-    private function _getEventData(EventRequest $request): FacebookEvent
+    public static function computeCutoff(int $days, DateTimeImmutable $now): string
     {
-        return $request->getEvents()[0];
+        return $now->modify("-{$days} days")->format('Y-m-d H:i:s');
     }
 
-    private function _getStatus(EventResponse $response = null, string $error = null): string
+    /**
+     * Decides log row status from a Facebook API response and/or an error message.
+     *
+     * Pure function — exposed as a static seam for unit tests.
+     */
+    public static function computeStatus(?EventResponse $response = null, ?string $error = null): string
     {
         if ($error) {
             return self::STATUS_ERROR;
@@ -89,39 +139,103 @@ class Events extends Component
             return self::STATUS_ERROR;
         }
 
-        if ($response['events_received'] === 0) {
+        $eventsReceived = $response['events_received'] ?? null;
+        if ($eventsReceived === null || (int) $eventsReceived === 0) {
             return self::STATUS_ERROR;
         }
 
-        if (count($response['messages']) > 0) {
+        $messages = $response['messages'] ?? [];
+        if (!is_array($messages)) {
+            return self::STATUS_ERROR;
+        }
+
+        if (count($messages) > 0) {
             return self::STATUS_ERROR;
         }
 
         return self::STATUS_SUCCESS;
     }
 
-    private function _toArray(?ArrayAccess $object): ?array
+    /**
+     * Recursively converts FB SDK objects (or arrays of them) to plain arrays.
+     *
+     * Pure function — exposed as a static seam for unit tests.
+     *
+     * @return array<string, mixed>|null
+     */
+    public static function eventToArray(mixed $object): ?array
     {
         if ($object === null) {
             return null;
         }
 
-        $array = [];
-
-        foreach ($object->getters() as $attribute => $getter) {
-            if (!method_exists($object, $getter)) {
-                continue;
+        if (is_array($object)) {
+            $out = [];
+            foreach ($object as $k => $v) {
+                $out[(string) $k] = is_object($v) || is_array($v) ? self::eventToArray($v) : $v;
             }
-
-            $value = $object->$getter();
-
-            if (is_object($value)) {
-                $value = $this->_toArray($value);
-            }
-
-            $array[$attribute] = $value;
+            return $out;
         }
 
-        return $array;
+        if (is_object($object) && method_exists($object, 'getters')) {
+            $array = [];
+            foreach ($object->getters() as $attribute => $getter) {
+                if (!method_exists($object, $getter)) {
+                    continue;
+                }
+
+                $value = $object->$getter();
+
+                if (is_object($value) || is_array($value)) {
+                    $value = self::eventToArray($value);
+                }
+
+                $array[$attribute] = $value;
+            }
+            return $array;
+        }
+
+        if ($object instanceof ArrayAccess) {
+            // Best-effort: convert ArrayAccess to array via JSON encode/decode.
+            return Json::decode(Json::encode($object));
+        }
+
+        return null;
+    }
+
+    private function _getEventId(mixed $facebookEvent): ?string
+    {
+        if (is_array($facebookEvent)) {
+            return isset($facebookEvent['event_id']) ? (string) $facebookEvent['event_id'] : null;
+        }
+
+        if (is_object($facebookEvent) && method_exists($facebookEvent, 'getEventId')) {
+            $id = $facebookEvent->getEventId();
+            return $id !== null ? (string) $id : null;
+        }
+
+        if ($facebookEvent instanceof ArrayAccess && isset($facebookEvent['event_id'])) {
+            return (string) $facebookEvent['event_id'];
+        }
+
+        return null;
+    }
+
+    private function _getEventName(mixed $facebookEvent): ?string
+    {
+        if (is_array($facebookEvent)) {
+            return isset($facebookEvent['event_name']) ? (string) $facebookEvent['event_name'] : null;
+        }
+
+        if (is_object($facebookEvent) && method_exists($facebookEvent, 'getEventName')) {
+            $name = $facebookEvent->getEventName();
+            return $name !== null ? (string) $name : null;
+        }
+
+        if ($facebookEvent instanceof ArrayAccess && isset($facebookEvent['event_name'])) {
+            return (string) $facebookEvent['event_name'];
+        }
+
+        return null;
     }
 }

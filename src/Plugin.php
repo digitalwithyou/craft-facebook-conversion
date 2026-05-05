@@ -8,10 +8,10 @@ use craft\base\Plugin as BasePlugin;
 use craft\commerce\elements\Order;
 use craft\events\RegisterComponentTypesEvent;
 use craft\services\Search;
+use craft\services\UserPermissions;
 use craft\services\Utilities;
-use craft\web\Application;
-use craft\web\WebApplication;
-use dwy\FacebookConversion\console\controllers\EventsController;
+use craft\web\Application as WebApplication;
+use craft\events\RegisterUserPermissionsEvent;
 use dwy\FacebookConversion\hooks\BodyTag;
 use dwy\FacebookConversion\hooks\HeadTag;
 use dwy\FacebookConversion\jobs\CleanupEventLogs;
@@ -32,30 +32,36 @@ use yii\base\Event;
 
 class Plugin extends BasePlugin
 {
+    public const PERMISSION_VIEW_EVENT_LOGS = 'facebook-conversion:viewEventLogs';
+
     public function init()
     {
         $this->hasCpSettings = true;
 
+        parent::init();
+
+        // Web, CP, console and jobs
         $this->_registerComponents();
 
-        Event::on(Application::class, Application::EVENT_INIT, function() {
-            parent::init();
+        if (Craft::$app->getRequest()->getIsConsoleRequest()) {
+            return;
+        }
 
-            $this->_registerHooks();
-            $this->_registerEventListeners();
+        // CP
+        if (Craft::$app->getRequest()->getIsCpRequest()) {
+            $this->_registerAssets();
             $this->_registerUtilities();
+            $this->_registerPermissions();
+            $this->_dailyCleanup();
+            return;
+        }
 
-            if (Craft::$app->getRequest()->getIsConsoleRequest()) {
-                return;
-            }
-
-            if (Craft::$app->getRequest()->getIsCpRequest()) {
-                $this->_registerAssets();
-            }
-
-            $this->_registerTwigFunctions();
-            $this->_getFacebookClickId();
-        });
+        // Web
+        $this->_registerEventListeners();
+        $this->_registerHooks();
+        $this->_registerTwigFunctions();
+        $this->_getFacebookClickId();
+        $this->_dailyCleanup();
     }
 
     public function getExternalId($email = null)
@@ -126,6 +132,21 @@ class Plugin extends BasePlugin
             $eventName,
             function(RegisterComponentTypesEvent $event) {
                 $event->types[] = EventsUtility::class;
+            }
+        );
+    }
+
+    private function _registerPermissions(): void
+    {
+        Event::on(
+            UserPermissions::class,
+            UserPermissions::EVENT_REGISTER_PERMISSIONS,
+            function(RegisterUserPermissionsEvent $event) {
+                $event->permissions[Craft::t('facebook-conversion', 'Facebook Conversion')] = [
+                    self::PERMISSION_VIEW_EVENT_LOGS => [
+                        'label' => Craft::t('facebook-conversion', 'View Facebook Conversion event logs'),
+                    ],
+                ];
             }
         );
     }

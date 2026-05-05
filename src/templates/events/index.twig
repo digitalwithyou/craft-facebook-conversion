@@ -12,7 +12,6 @@
                 <thead>
                     <tr>
                         <th>{{ "Event Name"|t('facebook-conversion') }}</th>
-                        <th>{{ "Event ID"|t('facebook-conversion') }}</th>
                         <th>{{ "Status"|t('facebook-conversion') }}</th>
                         <th>{{ "Date"|t('facebook-conversion') }}</th>
                         <th>{{ "Data"|t('facebook-conversion') }}</th>
@@ -23,21 +22,35 @@
                     {% for event in events %}
                         <tr>
                             <td>{{ event.event_name }}</td>
-                            <td>{{ event.event_id }}</td>
                             <td>{{ event.status }}</td>
                             <td>{{ event.created_at|date('Y-m-d H:i:s') }}</td>
                             <td>
-                                <button type="button" class="btn small" onclick="document.getElementById('event-data-{{ event.id }}').showModal()">
+                                <button
+                                    type="button"
+                                    class="btn small"
+                                    data-fbce-modal-open="event-data"
+                                    data-event-id="{{ event.id }}"
+                                >
                                     {{ "View Data"|t('facebook-conversion') }}
                                 </button>
                             </td>
                             <td>
                                 {% if event.response %}
-                                    <button type="button" class="btn small" onclick="document.getElementById('event-response-{{ event.id }}').showModal()">
+                                    <button
+                                        type="button"
+                                        class="btn small"
+                                        data-fbce-modal-open="event-response"
+                                        data-event-id="{{ event.id }}"
+                                    >
                                         {{ "View Response"|t('facebook-conversion') }}
                                     </button>
                                 {% elseif event.error %}
-                                    <button type="button" class="btn small" onclick="document.getElementById('event-error-{{ event.id }}').showModal()">
+                                    <button
+                                        type="button"
+                                        class="btn small"
+                                        data-fbce-modal-open="event-error"
+                                        data-event-id="{{ event.id }}"
+                                    >
                                         {{ "View Error"|t('facebook-conversion') }}
                                     </button>
                                 {% endif %}
@@ -58,45 +71,15 @@
             </div>
         </div>
 
-        {% for event in events %}
-            {% include "facebook-conversion/events/_includes/modal-event-data" with {
-                event: event,
-                settings: settings,
-            } only %}
-
-            {% if event.response %}
-                {% include "facebook-conversion/events/_includes/modal-response" with {
-                    event: event,
-                } only %}
-            {% endif %}
-
-            {% if event.error %}
-                {% include "facebook-conversion/events/_includes/modal-error" with {
-                    event: event,
-                } only %}
-            {% endif %}
-
-        {% endfor %}
+        {% embed "facebook-conversion/_partials/modal" with {
+            id: "fbce-event-modal",
+            title: "Event"|t('facebook-conversion'),
+        } only %}
+            {% block modalBody %}
+                <div id="fbce-event-modal-body"></div>
+            {% endblock %}
+        {% endembed %}
     </div>
-
-    {% js %}
-        document.addEventListener('click', function (e) {
-            if (e.target.matches('[data-copy-json-for-graph-explorer]')) {
-                var sourceId = e.target.getAttribute('data-copy-source');
-                if (sourceId) {
-                    var el = document.getElementById(sourceId);
-                    if (el && el.value && navigator.clipboard && navigator.clipboard.writeText) {
-                        var payload = el.value.replace('__TEXTAREA_CLOSE__', '</textarea>');
-                        navigator.clipboard.writeText(payload);
-                        var btn = e.target;
-                        var originalText = btn.textContent;
-                        btn.textContent = btn.getAttribute('data-copied-label') || 'Copied!';
-                        setTimeout(function () { btn.textContent = originalText; }, 2000);
-                    }
-                }
-            }
-        });
-    {% endjs %}
 {% else %}
 
     <h2>{{ "No events found yet"|t('facebook-conversion') }}</h2>
