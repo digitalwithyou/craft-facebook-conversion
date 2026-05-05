@@ -1,0 +1,9 @@
+{#
+    Plugin-level settings for the Facebook Conversion Formie integration.
+    All shared configuration (Pixel ID, Access Token, Test Event Code, log retention)
+    lives in the main plugin settings; this integration just reuses it.
+#}
+
+<p>{{ 'Pixel ID, Access Token and Test Event Code are read from the Facebook Conversion plugin settings.' | t('facebook-conversion') }}
+    <a href="{{ cpUrl('settings/plugins/facebook-conversion') }}">{{ 'Open plugin settings' | t('facebook-conversion') }}</a>.
+</p>

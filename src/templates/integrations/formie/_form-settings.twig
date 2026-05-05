@@ -1,0 +1,285 @@
+{% import '_includes/forms' as forms %}
+
+{% set handle = integration.handle %}
+{% set displayName = integration.displayName() %}
+{% set formSettings = integration.getFormSettings().getSettings() %}
+
+{% set eventType = form.settings.integrations[handle].eventType ?? '' %}
+{% set customEventName = form.settings.integrations[handle].customEventName ?? '' %}
+
+{% set eventTypeOptions = [{ label: 'Select an option' | t('formie'), value: '' }] %}
+{% for type in formSettings.eventTypes %}
+    {% set eventTypeOptions = eventTypeOptions | merge([{ label: type, value: type }]) %}
+{% endfor %}
+
+{# Lookup tables consumed by the inline JS below to render the event-type hint and field tooltips. #}
+{% set eventMetaByName = {} %}
+{% for entry in formSettings.eventMeta ?? [] %}
+    {% set eventMetaByName = eventMetaByName | merge({ (entry.name): { required: entry.required, recommended: entry.recommended } }) %}
+{% endfor %}
+
+{% set customDataLabels = {} %}
+{% set fieldDescriptions = {} %}
+{% for field in formSettings.customDataFields ?? [] %}
+    {% set customDataLabels = customDataLabels | merge({ (field.handle): field.name }) %}
+    {% if field.data.description ?? null %}
+        {% set fieldDescriptions = fieldDescriptions | merge({ (field.name): field.data.description }) %}
+    {% endif %}
+{% endfor %}
+{% for field in formSettings.userDataFields ?? [] %}
+    {% if field.data.description ?? null %}
+        {% set fieldDescriptions = fieldDescriptions | merge({ (field.name): field.data.description }) %}
+    {% endif %}
+{% endfor %}
+
+{% css %}
+.fb-conv-info {
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+    margin-left: 6px;
+    color: var(--medium-text-color, #606d7b);
+    cursor: help;
+    vertical-align: middle;
+}
+.fb-conv-info > svg {
+    fill: currentColor;
+    display: block;
+}
+.fb-conv-info > .fb-conv-tooltip {
+    position: absolute;
+    bottom: calc(100% + 8px);
+    left: -4px;
+    min-width: 220px;
+    max-width: 320px;
+    padding: 8px 10px;
+    background: #2a2f36;
+    color: #fff;
+    border-radius: 4px;
+    font-size: 12px;
+    line-height: 1.4;
+    white-space: normal;
+    text-align: left;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.25);
+    opacity: 0;
+    visibility: hidden;
+    pointer-events: none;
+    z-index: 100;
+    transition: opacity 0.1s ease;
+}
+.fb-conv-info > .fb-conv-tooltip::after {
+    content: '';
+    position: absolute;
+    top: 100%;
+    left: 9px;
+    border: 5px solid transparent;
+    border-top-color: #2a2f36;
+}
+.fb-conv-info:hover > .fb-conv-tooltip,
+.fb-conv-info:focus > .fb-conv-tooltip,
+.fb-conv-info:focus-within > .fb-conv-tooltip {
+    opacity: 1;
+    visibility: visible;
+}
+{% endcss %}
+
+<field-select
+    label="{{ 'Opt-In Field' | t('formie') }}"
+    instructions="{{ 'Choose a field to opt-in to {name}. The event is only sent when this field has a truthy value (typically an Agree field).' | t('formie', { name: displayName }) }}"
+    id="opt-in-field"
+    name="optInField"
+    :value="get(form, 'settings.integrations.{{ handle }}.optInField')"
+></field-select>
+
+<hr>
+
+<div data-fb-conv-event-type-wrapper
+    data-fb-conv-event-meta="{{ eventMetaByName | json_encode }}"
+    data-fb-conv-field-labels="{{ customDataLabels | json_encode }}">
+    {{ forms.selectField({
+        label: 'Event Type' | t('facebook-conversion'),
+        instructions: 'The Facebook standard event to send. Pick "Custom" to send a non-standard event name. See the <a href="https://developers.facebook.com/docs/meta-pixel/reference" target="_blank" rel="noopener">Meta Pixel reference</a> for the full list of events and their recommended parameters.' | t('facebook-conversion'),
+        id: 'eventType',
+        name: 'eventType',
+        required: true,
+        options: eventTypeOptions,
+        value: eventType,
+    }) }}
+
+    <p data-fb-conv-event-hint style="margin-top: 8px; display: none; color: var(--medium-text-color); font-size: 12px;"></p>
+
+    <ul v-if="!isEmpty(get(form, 'settings.integrations.{{ handle }}.errors.eventType'))" class="errors" v-cloak>
+        <li v-for="(error, index) in get(form, 'settings.integrations.{{ handle }}.errors.eventType')" :key="index">
+            ${ error }
+        </li>
+    </ul>
+</div>
+
+<div data-fb-conv-custom-event-name-wrapper style="margin-top: 24px;{% if eventType != 'Custom' %} display: none;{% endif %}">
+    {{ forms.textField({
+        label: 'Custom Event Name' | t('facebook-conversion'),
+        id: 'customEventName',
+        name: 'customEventName',
+        value: customEventName,
+    }) }}
+
+    <ul v-if="!isEmpty(get(form, 'settings.integrations.{{ handle }}.errors.customEventName'))" class="errors" v-cloak>
+        <li v-for="(error, index) in get(form, 'settings.integrations.{{ handle }}.errors.customEventName')" :key="index">
+            ${ error }
+        </li>
+    </ul>
+</div>
+
+<hr>
+
+<div data-fb-conv-mapping-host data-fb-conv-field-descriptions="{{ fieldDescriptions | json_encode }}">
+    <integration-form-settings handle="{{ handle }}" :form-settings="{{ formSettings | json_encode }}">
+        <template v-slot="{ get, isEmpty, settings }">
+            <integration-field-mapping
+                label="{{ 'User Data Mapping' | t('facebook-conversion') }}"
+                instructions="{{ 'Map form fields to Facebook user_data fields. Values are hashed by the Facebook SDK before sending. Map at least one of email, phone, or external ID for matching. Email gives the best match rate.' | t('facebook-conversion') }}"
+                id="user-data-field-mapping"
+                name-label="{{ 'Facebook User Data' | t('facebook-conversion') }}"
+                name="userDataFieldMapping"
+                :value="get(form, 'settings.integrations.{{ handle }}.userDataFieldMapping')"
+                :rows="get(settings, 'userDataFields')"
+            ></integration-field-mapping>
+
+            <ul v-if="!isEmpty(get(form, 'settings.integrations.{{ handle }}.errors.userDataFieldMapping'))" class="errors" v-cloak>
+                <li v-for="(error, index) in get(form, 'settings.integrations.{{ handle }}.errors.userDataFieldMapping')" :key="index">
+                    ${ error }
+                </li>
+            </ul>
+
+            <hr>
+
+            <integration-field-mapping
+                label="{{ 'Custom Data Mapping' | t('facebook-conversion') }}"
+                instructions="{{ 'Map form fields to Facebook custom_data fields. Not hashed; typically used for value/currency/content metadata.' | t('facebook-conversion') }}"
+                id="custom-data-field-mapping"
+                name-label="{{ 'Facebook Custom Data' | t('facebook-conversion') }}"
+                name="customDataFieldMapping"
+                :value="get(form, 'settings.integrations.{{ handle }}.customDataFieldMapping')"
+                :rows="get(settings, 'customDataFields')"
+            ></integration-field-mapping>
+
+            <ul v-if="!isEmpty(get(form, 'settings.integrations.{{ handle }}.errors.customDataFieldMapping'))" class="errors" v-cloak>
+                <li v-for="(error, index) in get(form, 'settings.integrations.{{ handle }}.errors.customDataFieldMapping')" :key="index">
+                    ${ error }
+                </li>
+            </ul>
+        </template>
+    </integration-form-settings>
+</div>
+
+{% js %}
+(function () {
+    var SELECT_SEL = '[data-fb-conv-event-type-wrapper] select';
+    var TYPE_WRAPPER_SEL = '[data-fb-conv-event-type-wrapper]';
+    var CUSTOM_WRAPPER_SEL = '[data-fb-conv-custom-event-name-wrapper]';
+    var HINT_SEL = '[data-fb-conv-event-hint]';
+
+    var parseJSON = function (raw) {
+        try { return raw ? JSON.parse(raw) : {}; } catch (e) { return {}; }
+    };
+
+    var formatList = function (handles, labels) {
+        return handles.map(function (h) { return labels[h] || h; }).join(', ');
+    };
+
+    var renderHint = function (hint, eventName, meta, labels) {
+        if (!hint) return;
+        if (!eventName || eventName === 'Custom') {
+            hint.textContent = '';
+            hint.style.display = 'none';
+            return;
+        }
+        var entry = meta[eventName];
+        if (!entry) {
+            hint.textContent = '';
+            hint.style.display = 'none';
+            return;
+        }
+        var parts = [];
+        if (entry.required && entry.required.length) {
+            parts.push(eventName + ' requires ' + formatList(entry.required, labels) + '.');
+        }
+        if (entry.recommended && entry.recommended.length) {
+            parts.push((parts.length ? 'Also recommended' : eventName + ' events typically use') + ': ' + formatList(entry.recommended, labels) + '.');
+        }
+        if (!parts.length) {
+            hint.textContent = '';
+            hint.style.display = 'none';
+            return;
+        }
+        hint.textContent = parts.join(' ');
+        hint.style.display = '';
+    };
+
+    var sync = function (select) {
+        var typeWrapper = select.closest(TYPE_WRAPPER_SEL);
+        if (!typeWrapper) return;
+        var meta = parseJSON(typeWrapper.getAttribute('data-fb-conv-event-meta'));
+        var labels = parseJSON(typeWrapper.getAttribute('data-fb-conv-field-labels'));
+        var hint = typeWrapper.querySelector(HINT_SEL);
+        renderHint(hint, select.value, meta, labels);
+
+        var customWrapper = typeWrapper.parentNode.querySelector(CUSTOM_WRAPPER_SEL);
+        if (customWrapper) {
+            customWrapper.style.display = select.value === 'Custom' ? '' : 'none';
+        }
+    };
+
+    document.querySelectorAll(SELECT_SEL).forEach(sync);
+
+    document.addEventListener('change', function (e) {
+        if (e.target && e.target.matches(SELECT_SEL)) {
+            sync(e.target);
+        }
+    });
+
+    // ---- Field-mapping tooltips ----
+    var DESC_HOST_SEL = '[data-fb-conv-mapping-host]';
+    var INFO_MARKER_CLASS = 'fb-conv-info';
+    var INFO_SVG = '<svg viewBox="0 0 16 16" width="14" height="14" aria-hidden="true">'
+        + '<path d="M8 0a8 8 0 1 0 0 16A8 8 0 0 0 8 0zm.9 4.1a1 1 0 1 1-2 0 1 1 0 0 1 2 0zM7 7h2v5.5H7V7z"/>'
+        + '</svg>';
+
+    var decorateLabel = function (labelEl, descriptions) {
+        if (!labelEl || labelEl.querySelector('.' + INFO_MARKER_CLASS)) return;
+        var text = (labelEl.textContent || '').trim();
+        if (!text) return;
+        var description = descriptions[text];
+        if (!description) return;
+
+        var info = document.createElement('span');
+        info.className = INFO_MARKER_CLASS;
+        info.setAttribute('tabindex', '0');
+        info.innerHTML = INFO_SVG;
+
+        var tooltip = document.createElement('span');
+        tooltip.className = 'fb-conv-tooltip';
+        tooltip.setAttribute('role', 'tooltip');
+        tooltip.textContent = description;
+        info.appendChild(tooltip);
+
+        // Append inside the label span so the icon sits inline next to the field name.
+        labelEl.appendChild(info);
+    };
+
+    var decorateAll = function () {
+        document.querySelectorAll(DESC_HOST_SEL).forEach(function (host) {
+            var descriptions = parseJSON(host.getAttribute('data-fb-conv-field-descriptions'));
+            // Formie wraps each row's field name in <span class="fui-table-label">.
+            // Fall back to the first <td> for safety if the markup ever changes.
+            host.querySelectorAll('tbody tr td:first-child .fui-table-label').forEach(function (label) {
+                decorateLabel(label, descriptions);
+            });
+        });
+    };
+
+    decorateAll();
+    var observer = new MutationObserver(function () { decorateAll(); });
+    observer.observe(document.body, { childList: true, subtree: true });
+})();
+{% endjs %}

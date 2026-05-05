@@ -8,6 +8,7 @@
 - New `facebook-conversion:viewEventLogs` user permission, required to access the Server Events utility.
 - Daily cleanup job removes log rows older than the retention window.
 - API requests now run asynchronously through Craft's queue, removing Facebook HTTP latency from the request path.
+- New Formie integration. When `verbb/formie` is installed, a "Facebook Conversion" integration appears under Miscellaneous on each form, with a dropdown of standard FB events (plus Custom) and field-mapping tables for `user_data` and `custom_data`. Client identifiers (`_fbc`, `_fbp`, IP, user-agent, referrer) are captured at submit time so events keep working when Formie runs integrations through its queue.
 
 ### Changed
 - Event log columns (`event_data`, `response`, `error`) widened to `MEDIUMTEXT` on MySQL/MariaDB to fit larger payloads. Postgres `text` is already unbounded.

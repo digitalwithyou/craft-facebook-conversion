@@ -1,6 +1,6 @@
 <?php
 
-namespace dwy\FacebookConversion\listeners\molliepayments;
+namespace dwy\FacebookConversion\integrations\molliepayments;
 
 use dwy\FacebookConversion\Plugin;
 use FacebookAds\Object\ServerSide\CustomData;

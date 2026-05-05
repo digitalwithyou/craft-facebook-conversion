@@ -1,6 +1,6 @@
 <?php
 
-namespace dwy\FacebookConversion\listeners\cms;
+namespace dwy\FacebookConversion\integrations\cms;
 
 use dwy\FacebookConversion\Plugin;
 use FacebookAds\Object\ServerSide\CustomData;

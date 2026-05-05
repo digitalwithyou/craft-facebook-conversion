@@ -1,10 +1,10 @@
 <?php
 
-namespace dwy\FacebookConversion\listeners\commerce\order;
+namespace dwy\FacebookConversion\integrations\commerce\order;
 
 use craft\commerce\events\LineItemEvent;
 use craft\helpers\ElementHelper;
-use dwy\FacebookConversion\listeners\commerce\BaseCommerceEvent;
+use dwy\FacebookConversion\integrations\commerce\BaseCommerceEvent;
 use FacebookAds\Object\ServerSide\Content;
 use FacebookAds\Object\ServerSide\CustomData;
 

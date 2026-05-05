@@ -49,11 +49,33 @@ class FacebookBusinessApi
 
     public function sendEvent(string $eventName, ?UserData $userData = null, ?CustomData $customData = null, ?string $eventId = null, ?string $eventSourceUrl = null): void
     {
+        $eventRequest = $this->buildEventRequest($eventName, $userData, $customData, $eventId, $eventSourceUrl);
+        if (!$eventRequest) {
+            return;
+        }
+
+        try {
+            Craft::$app->getQueue()->push(new SendFacebookConversionEvent([
+                'eventRequestSerialization' => serialize($eventRequest),
+            ]));
+        } catch (Throwable $e) {
+            Craft::error($e->getMessage(), __METHOD__);
+            $this->_tryLogEventFailure($eventRequest, $e->getMessage());
+        }
+    }
+
+    /**
+     * Builds an EventRequest from the supplied user/custom data. Returns null
+     * when the plugin isn't configured (Pixel ID + Access Token missing), so
+     * callers can short-circuit.
+     */
+    private function buildEventRequest(string $eventName, ?UserData $userData, ?CustomData $customData, ?string $eventId, ?string $eventSourceUrl): ?EventRequest
+    {
         $settings = Plugin::getInstance()->getSettings();
         $request = Craft::$app->getRequest();
 
         if (!$settings->getPixelId() || !$settings->getAccessToken()) {
-            return;
+            return null;
         }
 
         if (!$userData) {
@@ -80,14 +102,7 @@ class FacebookBusinessApi
             $eventRequest->setTestEventCode($testEventCode);
         }
 
-        try {
-            Craft::$app->getQueue()->push(new SendFacebookConversionEvent([
-                'eventRequestSerialization' => serialize($eventRequest),
-            ]));
-        } catch (Throwable $e) {
-            Craft::error($e->getMessage(), __METHOD__);
-            $this->_tryLogEventFailure($eventRequest, $e->getMessage());
-        }
+        return $eventRequest;
     }
 
     public function getUserData(): UserData

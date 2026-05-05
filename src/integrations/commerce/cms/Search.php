@@ -1,8 +1,8 @@
 <?php
 
-namespace dwy\FacebookConversion\listeners\commerce\cms;
+namespace dwy\FacebookConversion\integrations\commerce\cms;
 
-use dwy\FacebookConversion\listeners\commerce\BaseCommerceEvent;
+use dwy\FacebookConversion\integrations\commerce\BaseCommerceEvent;
 use FacebookAds\Object\ServerSide\CustomData;
 use yii\base\Event;
 

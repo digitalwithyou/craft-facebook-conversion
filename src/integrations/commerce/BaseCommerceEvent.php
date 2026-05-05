@@ -1,6 +1,6 @@
 <?php
 
-namespace dwy\FacebookConversion\listeners\commerce;
+namespace dwy\FacebookConversion\integrations\commerce;
 
 use craft\commerce\elements\Order;
 use craft\commerce\Plugin as Commerce;

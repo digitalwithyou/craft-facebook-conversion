@@ -7,19 +7,21 @@ use craft\base\Model;
 use craft\base\Plugin as BasePlugin;
 use craft\commerce\elements\Order;
 use craft\events\RegisterComponentTypesEvent;
+use craft\events\RegisterUserPermissionsEvent;
 use craft\services\Search;
 use craft\services\UserPermissions;
 use craft\services\Utilities;
 use craft\web\Application as WebApplication;
-use craft\events\RegisterUserPermissionsEvent;
 use dwy\FacebookConversion\hooks\BodyTag;
 use dwy\FacebookConversion\hooks\HeadTag;
+use dwy\FacebookConversion\integrations\cms\Search as CmsSearchEvent;
+use dwy\FacebookConversion\integrations\commerce\cms\Search as CommerceSearchEvent;
+use dwy\FacebookConversion\integrations\commerce\order\AfterAddLineItem;
+use dwy\FacebookConversion\integrations\commerce\order\AfterCompleteOrder;
+use dwy\FacebookConversion\integrations\formie\ClientDataCapture as FormieClientDataCapture;
+use dwy\FacebookConversion\integrations\formie\FacebookConversion as FormieFacebookConversion;
+use dwy\FacebookConversion\integrations\molliepayments\AfterTransaction;
 use dwy\FacebookConversion\jobs\CleanupEventLogs;
-use dwy\FacebookConversion\listeners\cms\Search as CmsSearchEvent;
-use dwy\FacebookConversion\listeners\commerce\cms\Search as CommerceSearchEvent;
-use dwy\FacebookConversion\listeners\commerce\order\AfterAddLineItem;
-use dwy\FacebookConversion\listeners\commerce\order\AfterCompleteOrder;
-use dwy\FacebookConversion\listeners\molliepayments\AfterTransaction;
 use dwy\FacebookConversion\models\Settings;
 use dwy\FacebookConversion\services\Events;
 use dwy\FacebookConversion\services\FacebookBusinessApi;
@@ -42,6 +44,7 @@ class Plugin extends BasePlugin
 
         // Web, CP, console and jobs
         $this->_registerComponents();
+        $this->_registerFormieIntegrationType();
 
         if (Craft::$app->getRequest()->getIsConsoleRequest()) {
             return;
@@ -58,6 +61,7 @@ class Plugin extends BasePlugin
 
         // Web
         $this->_registerEventListeners();
+        $this->_registerFormieClientDataCapture();
         $this->_registerHooks();
         $this->_registerTwigFunctions();
         $this->_getFacebookClickId();
@@ -121,6 +125,34 @@ class Plugin extends BasePlugin
         ]);
     }
 
+    private function _registerFormieIntegrationType(): void
+    {
+        if (!class_exists(\verbb\formie\Formie::class)) {
+            return;
+        }
+
+        Event::on(
+            \verbb\formie\services\Integrations::class,
+            \verbb\formie\services\Integrations::EVENT_REGISTER_INTEGRATIONS,
+            function(\verbb\formie\events\RegisterIntegrationsEvent $event) {
+                $event->miscellaneous[] = FormieFacebookConversion::class;
+            }
+        );
+    }
+
+    private function _registerFormieClientDataCapture(): void
+    {
+        if (!class_exists(\verbb\formie\services\Submissions::class)) {
+            return;
+        }
+
+        Event::on(
+            \verbb\formie\services\Submissions::class,
+            \verbb\formie\services\Submissions::EVENT_AFTER_SUBMISSION,
+            [new FormieClientDataCapture(), 'handle']
+        );
+    }
+
     private function _registerUtilities()
     {
         $eventName = (Craft::$app->getVersion() >= '5.0')
@@ -142,11 +174,23 @@ class Plugin extends BasePlugin
             UserPermissions::class,
             UserPermissions::EVENT_REGISTER_PERMISSIONS,
             function(RegisterUserPermissionsEvent $event) {
-                $event->permissions[Craft::t('facebook-conversion', 'Facebook Conversion')] = [
+                $heading = Craft::t('facebook-conversion', 'Facebook Conversion');
+                $permissions = [
                     self::PERMISSION_VIEW_EVENT_LOGS => [
                         'label' => Craft::t('facebook-conversion', 'View Facebook Conversion event logs'),
                     ],
                 ];
+
+                if (version_compare(Craft::$app->getVersion(), '5.0', '>=')) {
+                    // Craft 5 uses [['heading' => ..., 'permissions' => [...]], ...]
+                    $event->permissions[] = [
+                        'heading' => $heading,
+                        'permissions' => $permissions,
+                    ];
+                } else {
+                    // Craft 3/4 keyed the heading directly
+                    $event->permissions[$heading] = $permissions;
+                }
             }
         );
     }
