@@ -27,7 +27,7 @@ class FacebookBusinessApi
         $this->api->setLogger($logger);
     }
 
-    public function sendEvent($eventName, UserData $userData = null, CustomData $customData = null, $eventId = null)
+    public function sendEvent($eventName, UserData $userData = null, CustomData $customData = null, $eventId = null, $eventSourceUrl = null)
     {
         $settings = Plugin::getInstance()->getSettings();
         $request = Craft::$app->getRequest();
@@ -43,7 +43,7 @@ class FacebookBusinessApi
         $event = (new Event())
             ->setEventName($eventName)
             ->setEventTime(time())
-            ->setEventSourceUrl($request->getAbsoluteUrl())
+            ->setEventSourceUrl($eventSourceUrl ?? $request->getAbsoluteUrl())
             ->setActionSource('website')
             ->setUserData($userData)
             ->setCustomData($customData);

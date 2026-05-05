@@ -1,8 +1,13 @@
 # Release Notes for Facebook Conversion
 
+## 1.3.4 - 2026-01-31
+
+- Craft CMS 5.9 support
+- Upgraded to Meta Business SDK v24
+
 ## 1.3.3 - 2024-04-01
 
-- Craft CMS 5 supportgit 
+- Craft CMS 5 support
 - Moved documentation
 - Upgraded Meta Business SDK
 
