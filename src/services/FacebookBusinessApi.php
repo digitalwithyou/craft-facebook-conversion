@@ -3,10 +3,10 @@
 namespace dwy\FacebookConversion\services;
 
 use Craft;
+use dwy\FacebookConversion\jobs\SendEvent;
 use dwy\FacebookConversion\logger\CraftLogger;
 use dwy\FacebookConversion\Plugin;
 use FacebookAds\Api;
-use FacebookAds\Exception\Exception as FacebookException;
 use FacebookAds\Object\ServerSide\CustomData;
 use FacebookAds\Object\ServerSide\Event;
 use FacebookAds\Object\ServerSide\EventRequest;
@@ -27,7 +27,7 @@ class FacebookBusinessApi
         $this->api->setLogger($logger);
     }
 
-    public function sendEvent($eventName, UserData $userData = null, CustomData $customData = null, $eventId = null)
+    public function sendEvent($eventName, ?UserData $userData = null, ?CustomData $customData = null, $eventId = null)
     {
         $settings = Plugin::getInstance()->getSettings();
         $request = Craft::$app->getRequest();
@@ -52,19 +52,23 @@ class FacebookBusinessApi
             $event->setEventId($eventId);
         }
 
-        $eventRequest = (new EventRequest($settings->getPixelId()))
+        Craft::$app->getQueue()->push(new SendEvent([
+            'event' => $event,
+            'pixelId' => $settings->getPixelId(),
+            'testEventCode' => $settings->getTestEventCode(),
+        ]));
+    }
+
+    public function executeEvent(Event $event, string $pixelId, ?string $testEventCode = null): void
+    {
+        $eventRequest = (new EventRequest($pixelId))
             ->setEvents([$event]);
 
-        $testEventCode = $settings->getTestEventCode();
         if (!empty($testEventCode)) {
             $eventRequest->setTestEventCode($testEventCode);
         }
 
-        try {
-            $eventRequest->execute();
-        } catch (FacebookException $exception) {
-            Craft::error($exception->getMessage());
-        }
+        $eventRequest->execute();
     }
 
     public function getUserData(): UserData

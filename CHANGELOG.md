@@ -1,5 +1,11 @@
 # Release Notes for Facebook Conversion
 
+## Unreleased
+
+- Deliver conversion events through Craft's queue, preserving the original event
+  timestamp, ID, source URL, user data and destination. Failed deliveries remain
+  visible as failed queue jobs and can be retried with the same event payload.
+
 ## 1.3.4 - 2026-01-31
 
 - Craft CMS 5.9 support
